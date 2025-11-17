@@ -1,57 +1,131 @@
-@font-face {
-  font-family: 'MangoliWeb';
-  src: url('Mangoli.otf') format('opentype');
-       
-  font-weight: normal; 
-  font-style: normal;
+.Back{
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
 }
 
-body {
-  font-family: 'MangoliWeb', sans-serif; 
-}
-
-.H{
-  top: 10px;
-  gap: 800px;
+.Header{
+  width: 100%;
+  margin-top: 24px;
+  padding: 0 24px 0 24px;
   display: flex;
+  position: relative;
   flex-direction: row;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.Hl-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+}
+
+.Logo{
+  height: 40px;
+  width: 124px;
 }
 
 .Hl{
   display: flex;
+  position: relative;
   flex-direction: row;
-  height: 80px;
-  width: 300px;
-  gap: 16px;
+  height: auto;
+  width: auto;
+  gap: 40px;
 }
 
-.logo{
-  font-size: 52px;
-  margin: 0px;
-  font-weight: 500;
-}
-
-.Hl_content{
-  background-color: none;
-  width: 100px;
+.Hl-content{
+  color: azure;
+  background-color: unset;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer; 
+  font-size: 18px;
+  width: 120px;
   height: 40px;
   border: none;
 }
-.Hl_content:hover{
-  opacity: 0.5;
+.Hl-content:hover{
+  opacity: 0.8;
 }
 
 .Hr{
-  gap: 16px;
+  position: relative;
   display: flex;
+  flex-direction: row;
+  width: auto;
+  height: auto;
+  gap: 16px;
+  right: 24px;
 }
 
-.Hr_content{
+.Hr-content{
   border-radius: 24px;
-  width: 100px;
+  font-size: 18px;
+  width: 112px;
   height: 40px;
   border: none;
+  cursor: pointer; 
 }
-.Hr_content:hover{
+.Hr-content:hover{
   opacity: 0.5;
+}
+
+.dropdown-menu,
+.dropdown-plans {
+  position: relative;
+  display: block;
+  height: 40px;
+}
+
+.sub-main,
+.sub-plans {
+  position: absolute; 
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-width: 160px;
+  padding: 0;
+  max-height: 0; 
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out; 
+}
+
+.sub-main a,
+.sub-plans a {
+  display: block;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+  white-space: nowrap;
+}
+.sub-main a:hover,
+.sub-plans a:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown-menu:hover .sub-main {
+  max-height: 300px; 
+  opacity: 1;
+}
+
+.dropdown-plans:hover .sub-plans {
+  max-height: 300px; 
+  opacity: 1;
 }
