@@ -1,12 +1,20 @@
 .Back{
-  width: 100%;
-  height: 100%;
   position: fixed;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: -1;
+}
+
+@font-face {
+  font-family: 'Mangoli';
+  src: url('./mangoli/Mangoli.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 .Header{
@@ -128,4 +136,49 @@
 .dropdown-plans:hover .sub-plans {
   max-height: 300px; 
   opacity: 1;
+}
+
+.middle_bar{
+  width: 100%;
+  height: 228px;
+  display: flex;
+  position: relative;
+  box-sizing: border-box;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.middle_con{
+  font-size: 76px;
+  top: 140px;
+  color: #EEF2F7;
+  padding-left: 40px;
+  display: flex;
+  position: relative;
+  box-sizing: border-box;
+  font-family: Mangoli;
+  justify-content: center;
+}
+
+.Footer_bar{
+  right: 0;
+  left: 0;
+  height: 228px;
+  width: 100%;
+  bottom: 0;
+  display: flex;
+  position: fixed;
+  box-sizing: border-box;
+  background-color: white;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.Footer_con{
+  font-size: 40px;
+  padding-left: 40px;
+  display: flex;
+  position: relative;
+  box-sizing: border-box;
+  font-family: Mangoli;
 }
