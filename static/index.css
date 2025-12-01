@@ -11,8 +11,8 @@
 }
 
 @font-face {
-  font-family: 'Mangoli';
-  src: url('./mangoli/Mangoli.ttf') format('truetype');
+  font-family: 'Pretendard';
+  src: url('./Pretendard-SemiBold.otf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -163,7 +163,7 @@
   display: flex;
   position: relative;
   box-sizing: border-box;
-  font-family: Mangoli;
+  font-family: Pretendard;;
   justify-content: center;
 }
 
@@ -187,5 +187,5 @@
   display: flex;
   position: relative;
   box-sizing: border-box;
-  font-family: Mangoli;
+  font-family: Pretendard;
 }

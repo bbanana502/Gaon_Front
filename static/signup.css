@@ -23,17 +23,17 @@
   font-style: normal;
 }
 
-.Login_bar{
-  padding-top: 50px;
+.signup_bar{
+  padding-top: 146px;
   width: 50%;
-  min-height: 100vh;
+  height: 100%;
   position: fixed;
   top: 0;
   right: 0px;
   transform: translateX(-0%);
   background-color: white;
-  margin: 0;
-  padding: 0;
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
   box-sizing: border-box;
   justify-content: flex-start;
   display: flex;
@@ -41,9 +41,9 @@
   align-items: center;
 }
 
-.Login_con{
-  margin: 0;
-  padding: 0;
+.signup_con{
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
   box-sizing: border-box;
   width: auto;
   height: auto;
@@ -52,12 +52,12 @@
   flex-direction: column;
 }
 .title{
-  padding-top: 70px;
+  padding-top: 120px;
   position: relative;
   font-family: Pretendard;
   text-align: center;
   font-size: 40px;
-  margin: 0;
+  margin: 0px 0px 0px 0px;
 }
 .little_title{
   color: #A0A0A0;
@@ -70,8 +70,10 @@
 }
 
 .input_bar input{
+  display: flex;
   padding-left: 8px;
   box-sizing: border-box;
+  flex-direction: column;
   height: 48px;
   width: 420px;
   border-radius: 5px;
@@ -80,54 +82,22 @@
 }
 .input_bar p{
   margin: 8px 0px 4px 4px;
-  padding: 0;
   box-sizing: border-box;
   font-size: 14px;
 }
 
-.Footer{
-    width: 420px;
-    height: 18px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin: 0px 0px 24px 0px;
-    padding: 0;
-    box-sizing: border-box;
-}
-.check{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  width: auto;
-  height: auto;
-  gap: 8px;
-  font-size: 16px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-.newPass{ 
-    font-size: 16px;
-    color: #A0A0A0;
-    margin: 0; 
-}
-.newPass p {
-    margin: 0;
-}
-
 .result{
+  position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
+  bottom: 80px;
   width: 420px;
   height: 48px;
   background-color: black;
   color: #ffffff;
   border-radius: 6px;
-  margin-top: 20px; 
-  margin-bottom: 40px; 
 }
 .result:hover{
   opacity: 0.5;

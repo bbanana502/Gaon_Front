@@ -6,10 +6,32 @@
     <title>Document</title>
     <link rel="stylesheet" href="../static/login.css">
 </head>
+</head>
 <body>
     <div>
         <img src="../static/back.jpg" alt="Back" class="Back">
     </div>
-    안녕 나 로그인 페이지
+    <div class="Login_bar">
+        <div class="Login_con">
+            <p class="title">Log in to your account!</p>
+            <p class="little_title">please enter your email address.<br>if you've purchased TEMU's products before,<br>use the registered email address</p>
+        </div>
+        <div class="input_bar">
+            <p>Student Number</p>
+            <input type="text" placeholder="Enter Your Student Number">
+            <p>Password</p>
+            <input type="password" placeholder="Enter Your Password">
+        </div>
+        <div class="Footer">
+            <div class="check">
+                <input type="checkbox" id="Remember">
+                <label for="Remember">
+                    Remember Me
+                </label>
+            </div>
+            <a href="/newPassword"><p class="newPass">Forgot Password?</p></a>
+        </div>
+        <button class="result">Log in</button>
+    </div>
 </body>
 </html>
