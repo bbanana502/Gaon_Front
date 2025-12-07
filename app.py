@@ -5,48 +5,39 @@ import re
 
 app = Flask(__name__)
 
+# Constants for Busan Software Meister High School
+NEIS_API_KEY = "Type=json&ATPT_OFCDC_SC_CODE=C10&SD_SCHUL_CODE=7150658"
+BASE_URL = "https://open.neis.go.kr/hub/"
+
 # Daily Schedule Definition (Fixed Events + Class Slots)
 DAILY_SCHEDULE = [
-    {"type": "fixed", "name": "Wake Up", "start": "06:50", "end": "06:50"}, # Instant event representation
-    {"type": "fixed", "name": "School Arrival", "start": "06:50", "end": "07:30"},
-    {"type": "fixed", "name": "Breakfast", "start": "07:30", "end": "08:10"},
-    {"type": "fixed", "name": "Morning Self Study", "start": "08:10", "end": "08:30"},
-    {"type": "fixed", "name": "Break", "start": "08:30", "end": "08:40"},
+    {"type": "fixed", "name": "기상", "start": "06:50", "end": "06:50"}, # Instant event representation
+    {"type": "fixed", "name": "등교", "start": "06:50", "end": "07:30"},
+    {"type": "fixed", "name": "아침 식사", "start": "07:30", "end": "08:10"},
+    {"type": "fixed", "name": "아침 자습", "start": "08:10", "end": "08:30"},
+    {"type": "fixed", "name": "쉬는 시간", "start": "08:30", "end": "08:40"},
     {"type": "class", "period": 1, "start": "08:40", "end": "09:30"},
-    {"type": "break", "name": "Break", "start": "09:30", "end": "09:40"},
+    {"type": "break", "name": "쉬는 시간", "start": "09:30", "end": "09:40"},
     {"type": "class", "period": 2, "start": "09:40", "end": "10:30"},
-    {"type": "break", "name": "Break", "start": "10:30", "end": "10:40"},
+    {"type": "break", "name": "쉬는 시간", "start": "10:30", "end": "10:40"},
     {"type": "class", "period": 3, "start": "10:40", "end": "11:30"},
-    {"type": "break", "name": "Break", "start": "11:30", "end": "11:40"},
+    {"type": "break", "name": "쉬는 시간", "start": "11:30", "end": "11:40"},
     {"type": "class", "period": 4, "start": "11:40", "end": "12:30"},
-    {"type": "fixed", "name": "Lunch Time", "start": "12:30", "end": "13:20", "is_special": True},
+    {"type": "fixed", "name": "점심 시간", "start": "12:30", "end": "13:20", "is_special": True},
     {"type": "class", "period": 5, "start": "13:20", "end": "14:10"},
-    {"type": "break", "name": "Break", "start": "14:10", "end": "14:20"},
+    {"type": "break", "name": "쉬는 시간", "start": "14:10", "end": "14:20"},
     {"type": "class", "period": 6, "start": "14:20", "end": "15:10"},
-    {"type": "break", "name": "Break", "start": "15:10", "end": "15:20"},
+    {"type": "break", "name": "쉬는 시간", "start": "15:10", "end": "15:20"},
     {"type": "class", "period": 7, "start": "15:20", "end": "16:10"},
-    {"type": "fixed", "name": "Cleaning Time", "start": "16:10", "end": "16:30"},
-    {"type": "class", "period": 8, "start": "16:30", "end": "17:20", "subject": "After School"},
-    {"type": "break", "name": "Break", "start": "17:20", "end": "17:30"}, # Assumed 10m break
-    {"type": "class", "period": 9, "start": "17:30", "end": "18:20", "subject": "After School"},
-    {"type": "fixed", "name": "Dinner Time", "start": "18:10", "end": "19:00", "is_special": True}, # Overlap adjustment? User said 50m dinner after 8-9. 
-    # User said: "8~9교시 후 50분 저녁시간" -> 18:20 end of 9th? 
-    # Let's adjust exact request: "8-9교시 (100분)" implies 16:30-18:10? 
-    # User Request: "16:30 8교시, 9교시 후 50분 저녁". 
-    # Let's stick closer to the user's specific text in request:
-    # "8~9교시 (100분)" -> 16:30 ~ 18:10.
-    # "50분 저녁" -> 18:10 ~ 19:00.
-    # "10~11교시 (100분)" -> 19:00 ~ 20:40.
-    
-    # Refined Schedule based on prompt text analysis:
-    # 7교시 End: 16:10.
-    # Cleaning: 20min -> 16:10 - 16:30.
-    # 8-9 Period: 100min -> 16:30 - 18:10.
-    # Dinner: 50min -> 18:10 - 19:00.
-    # 10-11 Period: 100min -> 19:00 - 20:40.
-    # Dorm Entry: 20:40.
-    # Roll Call: 21:00.
-    # Lights Out: 23:00.
+    {"type": "fixed", "name": "청소 시간", "start": "16:10", "end": "16:30"},
+    {"type": "class", "period": 8, "start": "16:30", "end": "17:20", "subject": "방과후 수업"},
+    {"type": "break", "name": "쉬는 시간", "start": "17:20", "end": "17:30"}, 
+    {"type": "class", "period": 9, "start": "17:30", "end": "18:20", "subject": "방과후 수업"},
+    {"type": "fixed", "name": "저녁 식사", "start": "18:10", "end": "19:00", "is_special": True}, 
+    {"type": "fixed", "name": "야간 자율 학습 (10-11교시)", "start": "19:00", "end": "20:40"},
+    {"type": "fixed", "name": "기숙사 입실", "start": "20:40", "end": "21:00"},
+    {"type": "fixed", "name": "점호 / 휴식", "start": "21:00", "end": "23:00"},
+    {"type": "fixed", "name": "소등", "start": "23:00", "end": "23:01"}
 ]
 
 # Re-defining constants for internal use if needed, but mainly loop-driven now.

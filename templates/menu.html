@@ -64,10 +64,10 @@
                     <img src="../static/logo.svg" alt="Gaon" style="height: 40px;">
                 </a>
                 <nav class="main-nav">
-                    <a href="/chat" class="nav-item">Chatting</a>
-                    <a href="/timetable" class="nav-item">Timetable</a>
-                    <a href="/menu" class="nav-item active" style="background-color: var(--hover-bg);">Menu</a>
-                    <a href="/profile" class="nav-item">Setting</a>
+                    <a href="/chat" class="nav-item">채팅</a>
+                    <a href="/timetable" class="nav-item">시간표</a>
+                    <a href="/menu" class="nav-item active" style="background-color: var(--hover-bg);">급식</a>
+                    <a href="/profile" class="nav-item">설정</a>
                 </nav>
             </div>
             <div class="user-area">
@@ -79,8 +79,8 @@
 
         <div class="page-content">
             <div class="menu-card" id="menuCard">
-                <div class="date-title" id="menuDate">Today's Lunch</div>
-                <div id="menuContent" class="loading">Loading menu data...</div>
+                <div class="date-title" id="menuDate">오늘의 급식</div>
+                <div id="menuContent" class="loading">급식 정보 로딩 중...</div>
             </div>
         </div>
     </div>
@@ -95,15 +95,21 @@
                     
                     // Update Date if provided
                     if(data.date) {
-                        document.getElementById('menuDate').textContent = `Lunch Menu (${data.date})`;
+                        // Optional: Format date? Keep simple for now.
+                        document.getElementById('menuDate').textContent = `오늘의 급식 (${data.date})`;
                     }
 
                     // Build List
+                    if (!data.menu || data.menu.length === 0) {
+                        content.innerHTML = '<div class="loading">급식 정보가 없습니다.</div>';
+                        return;
+                    }
+
                     let html = '<ul class="menu-list">';
                     data.menu.forEach(item => {
                         html += `
                             <li class="menu-item">
-                                <span class="menu-category">${item.category}</span>
+                                <span class="menu-category">${item.category === 'Menu' ? '메뉴' : item.category}</span>
                                 <span class="menu-name">${item.name}</span>
                             </li>
                         `;
@@ -111,13 +117,13 @@
                     html += '</ul>';
                     
                     if(data.calories) {
-                        html += `<div class="calories">Total Calories: ${data.calories} kcal</div>`;
+                        html += `<div class="calories">총 칼로리: ${data.calories}</div>`;
                     }
 
                     content.innerHTML = html;
                 })
                 .catch(err => {
-                    document.getElementById('menuContent').textContent = "Failed to load menu.";
+                    document.getElementById('menuContent').textContent = "급식 정보를 불러오지 못했습니다.";
                     console.error(err);
                 });
         });
