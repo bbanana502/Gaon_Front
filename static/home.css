@@ -1,0 +1,329 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-color: #f5f5f5; /* Light grey background */
+    color: #333;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    min-height: 90vh;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+/* Dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.main-btn {
+    background-color: #f1f3f4;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    transition: background-color 0.2s;
+}
+
+.main-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 10;
+    border-radius: 4px;
+    top: 100%;
+    left: 0;
+    padding: 8px 0;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+/* User Area */
+.user-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-area a {
+    display: block;
+    text-decoration: none;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    background-color: #ddd;     /* Placeholder color */
+    border-radius: 50%;
+    cursor: pointer;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23999"><path d="M12 12c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm0-2c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/></svg>'); 
+    background-size: cover;
+}
+
+/* Controls Bar */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.btn-group {
+    display: flex;
+    gap: 5px;
+}
+
+.icon-btn, .text-btn {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.text-btn {
+    font-weight: 500;
+}
+
+.view-switch {
+    display: flex;
+    gap: 5px;
+}
+
+.view-switch button {
+    background: none;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+    border-radius: 4px;
+}
+
+.view-switch button.active {
+    background-color: #e74c3c; /* Selected Red */
+    color: white;
+    font-weight: 500;
+}
+
+.search-area input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    width: 200px;
+}
+
+/* Calendar Grid Container to handle differnt views */
+.calendar-view-container {
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Week & Day View Shared Styles --- */
+.day-headers {
+    display: grid;
+    /* Grid template columns will be set via JS inline styles or separate classes depending on Day/Week */
+    border-bottom: 1px solid #eee;
+}
+
+.week-grid-layout .day-headers,
+.week-grid-layout .time-row {
+    display: grid;
+    grid-template-columns: 60px repeat(7, 1fr) 60px; /* Default Week */
+}
+
+.day-grid-layout .day-headers,
+.day-grid-layout .time-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px; /* Day View */
+}
+
+.time-col-header, .info-col {
+    padding: 10px;
+    font-size: 11px;
+    text-align: center;
+    color: #888;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.day-col {
+    padding: 10px;
+    border-left: 1px solid #eee;
+    text-align: left;
+}
+
+.day-name {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.day-num {
+    display: block;
+    font-size: 20px;
+    font-weight: 400;
+    color: #333;
+}
+
+.info-col {
+    border-left: 1px solid #eee;
+    background-color: #f9f9f9;
+}
+
+.time-row {
+    height: 60px; /* Each hour row height */
+    border-bottom: 1px solid #eee;
+}
+
+.time-label {
+    padding: 10px;
+    font-size: 11px;
+    color: #888;
+    text-align: right;
+    position: relative;
+    top: -10px; /* Align label with grid line */
+}
+
+.day-cell {
+    border-left: 1px solid #eee;
+}
+
+.day-cell.current-day-col {
+    background-color: #f0f8ff; /* Highlight color */
+}
+
+.time-row .day-cell:last-child {
+    border-right: 1px solid #eee;
+}
+
+/* --- Month View --- */
+.month-container {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-top: 1px solid #eee;
+    border-left: 1px solid #eee;
+}
+
+.month-header-cell {
+    padding: 10px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 12px;
+    color: #555;
+    border-right: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    background-color: #f9f9f9;
+}
+
+.month-day-cell {
+    min-height: 100px;
+    padding: 10px;
+    border-right: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    position: relative;
+}
+
+.month-day-cell .date-num {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.month-day-cell.other-month {
+    background-color: #fafafa;
+    color: #ccc;
+}
+
+.month-day-cell.today {
+    background-color: #f0f8ff;
+}
+
+/* --- Year View --- */
+.year-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns x 3 rows */
+    gap: 20px;
+    padding: 20px;
+}
+
+.year-month-card {
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.year-month-title {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.mini-month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    font-size: 10px;
+    text-align: center;
+    gap: 2px;
+}
+
+.mini-day {
+    padding: 2px;
+}

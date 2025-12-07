@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaon - Dashboard</title>
+    <link rel="stylesheet" href="../static/home.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-area">
+                <a href="/home" class="logo">
+                    <img src="../static/logo.svg" alt="Gaon" style="height: 40px;">
+                </a>
+                <div class="dropdown">
+                  <button class="main-btn">Main</button>
+                  <div class="dropdown-content">
+                    <a href="#">Dashboard</a>
+                    <a href="/chat">Chatting</a>
+                    <a href="#">Team</a>
+                    <a href="/profile">Settings</a>
+                  </div>
+                </div>
+            </div>
+            <div class="user-area">
+                <a href="/profile">
+                    <div class="profile-pic"></div>
+                </a>
+            </div>
+        </header>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <div class="nav-date">
+                <div class="btn-group">
+                    <button class="icon-btn" id="prevWeekBtn">&lt;</button>
+                    <button class="text-btn" id="todayBtn">Today</button>
+                    <button class="icon-btn" id="nextWeekBtn">&gt;</button>
+                </div>
+            </div>
+            
+            <div class="view-switch">
+                <button id="dayViewBtn">Day</button>
+                <button class="active" id="weekViewBtn">Week</button>
+                <button id="monthViewBtn">Month</button>
+                <button id="yearViewBtn">Year</button>
+            </div>
+
+            <div class="search-area">
+                <input type="text" placeholder="Search">
+            </div>
+        </div>
+
+        <div class="timezone-info">
+            <div class="day-headers" id="dayHeaders">
+                <div class="time-col-header"></div> <!-- Spacer for time column -->
+                <!-- JS will inject day columns here -->
+            </div>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="calendar-grid" id="calendarGrid">
+            <!-- JS could inject rows here, but for now we keep static rows and just update headers logic -->
+            <!-- Time Rows (7 AM to 3 PM for demo) -->
+            <div class="time-row">
+                <div class="time-label">7 AM</div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+            </div>
+            <div class="time-row">
+                <div class="time-label">8 AM</div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+            </div>
+            <div class="time-row">
+                <div class="time-label">9 AM</div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+            </div>
+            <div class="time-row">
+                <div class="time-label">10 AM</div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+            </div>
+            <div class="time-row">
+                <div class="time-label">11 AM</div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+            </div>
+            <div class="time-row">
+                <div class="time-label">12 PM</div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+            </div>
+            <div class="time-row">
+                <div class="time-label">1 PM</div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+            </div>
+            <div class="time-row">
+                <div class="time-label">2 PM</div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+            </div>
+             <div class="time-row">
+                <div class="time-label">3 PM</div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+                <div class="day-cell"></div>
+            </div>
+        </div>
+    </div>
+    <script src="../static/home.js"></script>
+</body>
+</html>
