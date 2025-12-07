@@ -73,11 +73,19 @@
             margin-right: 5px;
         }
 
-        /* Card Header */
+        /* Card Header - Dynamic Colors */
         .card-header {
             padding: 30px;
             position: relative;
+            color: white; /* White text for colored backgrounds */
+            transition: background 0.5s ease;
+            background: var(--card-bg); /* Default fallback */
         }
+        
+        /* Color Variants */
+        .header-green { background: linear-gradient(135deg, #66BB6A 0%, #2E7D32 100%); }
+        .header-orange { background: linear-gradient(135deg, #FF8A65 0%, #D84315 100%); }
+        .header-red { background: linear-gradient(135deg, #EF5350 0%, #C62828 100%); }
         
         .header-top {
             display: flex;
@@ -93,18 +101,19 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            color: white; /* Ensure white */
         }
         
         .menu-subtitle {
             font-size: 14px;
-            opacity: 0.7;
+            opacity: 0.9;
             font-weight: 500;
-            color: var(--text-secondary);
+            color: rgba(255,255,255,0.9); /* Subtle white */
         }
         
         .calorie-badge {
-            background-color: rgba(255, 112, 67, 0.1);
-            color: var(--food-accent);
+            background-color: rgba(255, 255, 255, 0.25);
+            color: white;
             padding: 6px 14px;
             border-radius: 30px;
             font-size: 14px;
@@ -112,6 +121,8 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         /* Card Body */
@@ -195,7 +206,7 @@
         .modal-overlay.active .modal-card { transform: scale(1); opacity: 1; }
         
         .modal-header {
-            /* Clean & Simple Header */
+            /* Clean & Simple Header - Remains Simple */
             background: var(--card-bg);
             padding: 30px 20px 10px 20px;
             color: var(--text-color);
@@ -215,11 +226,11 @@
         }
         
         .modal-label {
-            font-size: 16px; /* Larger */
-            color: var(--text-color); /* Darker */
+            font-size: 16px; 
+            color: var(--text-color);
             margin-bottom: 12px;
-            font-weight: 700; /* Bold */
-            letter-spacing: 0; /* Clearer */
+            font-weight: 700; 
+            letter-spacing: 0; 
         }
         
         .allergy-list {
@@ -265,7 +276,7 @@
             box-shadow: 0 6px 16px rgba(255, 112, 67, 0.4);
         }
         
-        /* Close Icon in Header (Dark for visibility on white) */
+        /* Close Icon in Header */
         .header-close {
             position: absolute;
             top: 15px;
@@ -295,11 +306,9 @@
         /* Dark Mode */
         .dark-mode .meal-tabs { background-color: rgba(255,255,255,0.05); }
         .dark-mode .tab-btn.active { background-color: var(--card-bg); }
-        /* Modal header matches card in dark mode too */
         .dark-mode .modal-header { background: var(--card-bg); color: var(--text-color); }
         .dark-mode .close-btn { background-color: rgba(255,255,255,0.1); }
         .dark-mode .close-btn:hover { background-color: var(--food-accent); }
-
     </style>
 </head>
 <body>
@@ -339,7 +348,7 @@
                     </button>
                 </div>
                 
-                <div class="card-header">
+                <div class="card-header header-orange">
                     <div class="header-top">
                         <div>
                             <h1 class="menu-title" id="mealTitle">아침</h1>
@@ -402,6 +411,28 @@
             document.getElementById('detailModal').classList.add('active');
         }
 
+        function updateHeaderColor(caloriesStr) {
+            const header = document.querySelector('.card-header');
+            header.classList.remove('header-green', 'header-orange', 'header-red');
+            
+            // Parse "850.5 Kcal" -> 850.5
+            const cal = parseFloat(caloriesStr.replace(/[^0-9.]/g, '')) || 0;
+            
+            if (cal === 0) {
+                header.classList.add('header-orange'); // Default
+                return;
+            }
+
+            // Thresholds: < 900 Green, 900-1100 Orange, > 1100 Red
+            if (cal < 900) {
+                header.classList.add('header-green');
+            } else if (cal < 1100) {
+                header.classList.add('header-orange');
+            } else {
+                header.classList.add('header-red');
+            }
+        }
+
         function renderMeal(mealType) {
             // Update Title
             const titles = { 'breakfast': '아침', 'lunch': '점심', 'dinner': '저녁' };
@@ -412,6 +443,7 @@
             
             if (!mealData || !mealData.menu || mealData.menu.length === 0) {
                 document.getElementById('calText').textContent = "0 Kcal";
+                updateHeaderColor("0"); 
                 content.innerHTML = `
                     <div class="state-container">
                         <span class="state-icon">🍽️</span>
@@ -421,12 +453,12 @@
             }
             
             // Update Calories
-            document.getElementById('calText').textContent = mealData.calories;
+            const calStr = mealData.calories;
+            document.getElementById('calText').textContent = calStr;
+            updateHeaderColor(calStr);
             
             let html = '<ul class="menu-list">';
             mealData.menu.forEach((item, index) => {
-                // Encode basic data to pass to function or look up
-                // We'll attach click listener dynamically or via closure, simpler to re-attach
                 html += `
                     <li class="menu-item" id="dish-${mealType}-${index}">
                         <span class="menu-name">${item.name}</span>
@@ -487,6 +519,7 @@
                     });
                     
                     renderMeal(currentMeal);
+                    // Initial header color set by renderMeal
                 })
                 .catch(err => {
                     console.error(err);
