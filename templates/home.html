@@ -17,11 +17,9 @@
                     <img src="../static/logo.svg" alt="Gaon" style="height: 40px;">
                 </a>
                 <div class="dropdown">
-                  <button class="main-btn">Main</button>
+                  <button class="main-btn">Main ▾</button>
                   <div class="dropdown-content">
-                    <a href="#">Dashboard</a>
                     <a href="/chat">Chatting</a>
-                    <a href="#">Team</a>
                     <a href="/profile">Settings</a>
                   </div>
                 </div>
@@ -37,7 +35,10 @@
         <div class="controls">
             <div class="nav-date">
                 <div class="btn-group">
-                    <button class="icon-btn" id="prevWeekBtn">&lt;</button>
+                <button class="icon-btn" id="themeToggleBtn">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+                <button class="icon-btn" id="prevWeekBtn">&lt;</button>
                     <button class="text-btn" id="todayBtn">Today</button>
                     <button class="icon-btn" id="nextWeekBtn">&gt;</button>
                 </div>
@@ -158,6 +159,55 @@
             </div>
         </div>
     </div>
-    <script src="../static/home.js"></script>
+    <!-- Floating Add Button -->
+    <button class="add-event-btn" id="addEventBtn">+</button>
+
+    <!-- Event Modal -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Add Event</h2>
+            <form id="eventForm">
+                <div class="form-group">
+                    <label for="eventTitle">Title</label>
+                    <input type="text" id="eventTitle" required placeholder="Event Name">
+                </div>
+                <div class="form-group">
+                    <label for="eventDate">Date</label>
+                    <input type="date" id="eventDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventTime">Time</label>
+                    <select id="eventTime">
+                        <option value="07">7 AM</option>
+                        <option value="08">8 AM</option>
+                        <option value="09">9 AM</option>
+                        <option value="10">10 AM</option>
+                        <option value="11">11 AM</option>
+                        <option value="12">12 PM</option>
+                        <option value="13">1 PM</option>
+                        <option value="14">2 PM</option>
+                        <option value="15">3 PM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="eventColor">Color</label>
+                    <select id="eventColor">
+                        <option value="#3498db">Blue</option>
+                        <option value="#e74c3c">Red</option>
+                        <option value="#2ecc71">Green</option>
+                        <option value="#f1c40f">Yellow</option>
+                        <option value="#9b59b6">Purple</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">Save</button>
+                    <button type="button" class="cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='home.js') }}"></script>
+    <script src="{{ url_for('static', filename='theme.js') }}"></script>
 </body>
 </html>

@@ -1,4 +1,28 @@
 /* Global Styles */
+:root {
+    --bg-color: #f5f5f5;
+    --container-bg: #ffffff;
+    --text-color: #333333;
+    --text-secondary: #666666;
+    --border-color: #eeeeee;
+    --accent-color: #3498db;
+    --hover-bg: #f1f3f4;
+    --calendar-highlight: #f0f8ff;
+    --card-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.dark-mode {
+    --bg-color: #1e1e1e;
+    --container-bg: #2d2d2d;
+    --text-color: #e0e0e0;
+    --text-secondary: #aaaaaa;
+    --border-color: #404040;
+    --accent-color: #3498db;
+    --hover-bg: #404040;
+    --calendar-highlight: #3a3a3a;
+    --card-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -7,16 +31,17 @@
 }
 
 body {
-    background-color: #f5f5f5; /* Light grey background */
-    color: #333;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .container {
     max-width: 1400px;
     margin: 20px auto;
-    background-color: #fff;
+    background-color: var(--container-bg);
     padding: 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: var(--card-shadow);
     border-radius: 8px;
     min-height: 90vh;
 }
@@ -27,7 +52,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color);
     margin-bottom: 20px;
 }
 
@@ -47,28 +72,32 @@ body {
 .dropdown {
     position: relative;
     display: inline-block;
+    margin-top: 5px; /* Visual alignment with Logo text */
 }
 
 .main-btn {
-    background-color: #f1f3f4;
+    background-color: transparent;
     border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: 600;
     cursor: pointer;
-    font-size: 16px;
-    color: #333;
-    transition: background-color 0.2s;
+    font-size: 18px;
+    color: var(--text-color);
+    transition: color 0.2s, background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .main-btn:hover {
-    background-color: #e0e0e0;
+    background-color: var(--hover-bg);
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #fff;
+    background-color: var(--container-bg);
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 10;
@@ -79,13 +108,13 @@ body {
 }
 
 .dropdown-content a {
-    color: black;
+    color: var(--text-color);
     padding: 12px 16px;
     text-decoration: none;
     display: block;
 }
 
-.dropdown-content a:hover {background-color: #f1f1f1;}
+.dropdown-content a:hover {background-color: var(--hover-bg);}
 
 .dropdown:hover .dropdown-content {display: block;}
 
@@ -126,8 +155,8 @@ body {
 }
 
 .icon-btn, .text-btn {
-    background-color: #fff;
-    border: 1px solid #ddd;
+    background-color: var(--container-bg);
+    border: 1px solid var(--border-color);
     padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
@@ -149,7 +178,7 @@ body {
     padding: 6px 12px;
     cursor: pointer;
     font-size: 14px;
-    color: #666;
+    color: var(--text-secondary);
     border-radius: 4px;
 }
 
@@ -161,7 +190,7 @@ body {
 
 .search-area input {
     padding: 8px 12px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     outline: none;
     width: 200px;
@@ -177,7 +206,7 @@ body {
 .day-headers {
     display: grid;
     /* Grid template columns will be set via JS inline styles or separate classes depending on Day/Week */
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .week-grid-layout .day-headers,
@@ -196,7 +225,7 @@ body {
     padding: 10px;
     font-size: 11px;
     text-align: center;
-    color: #888;
+    color: var(--text-secondary);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -204,7 +233,7 @@ body {
 
 .day-col {
     padding: 10px;
-    border-left: 1px solid #eee;
+    border-left: 1px solid var(--border-color);
     text-align: left;
 }
 
@@ -212,7 +241,7 @@ body {
     display: block;
     font-size: 11px;
     font-weight: 700;
-    color: #555;
+    color: var(--text-secondary);
     text-transform: uppercase;
     margin-bottom: 4px;
 }
@@ -221,38 +250,38 @@ body {
     display: block;
     font-size: 20px;
     font-weight: 400;
-    color: #333;
+    color: var(--text-color);
 }
 
 .info-col {
-    border-left: 1px solid #eee;
+    border-left: 1px solid var(--border-color);
     background-color: #f9f9f9;
 }
 
 .time-row {
     height: 60px; /* Each hour row height */
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .time-label {
     padding: 10px;
     font-size: 11px;
-    color: #888;
+    color: var(--text-secondary);
     text-align: right;
     position: relative;
     top: -10px; /* Align label with grid line */
 }
 
 .day-cell {
-    border-left: 1px solid #eee;
+    border-left: 1px solid var(--border-color);
 }
 
 .day-cell.current-day-col {
-    background-color: #f0f8ff; /* Highlight color */
+    background-color: var(--calendar-highlight); /* Highlight color */
 }
 
 .time-row .day-cell:last-child {
-    border-right: 1px solid #eee;
+    border-right: 1px solid var(--border-color);
 }
 
 /* --- Month View --- */
@@ -260,7 +289,7 @@ body {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     border-top: 1px solid #eee;
-    border-left: 1px solid #eee;
+    border-left: 1px solid var(--border-color);
 }
 
 .month-header-cell {
@@ -268,17 +297,17 @@ body {
     text-align: center;
     font-weight: 700;
     font-size: 12px;
-    color: #555;
-    border-right: 1px solid #eee;
-    border-bottom: 1px solid #eee;
+    color: var(--text-secondary);
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
     background-color: #f9f9f9;
 }
 
 .month-day-cell {
     min-height: 100px;
     padding: 10px;
-    border-right: 1px solid #eee;
-    border-bottom: 1px solid #eee;
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
     position: relative;
 }
 
@@ -288,8 +317,8 @@ body {
 }
 
 .month-day-cell.other-month {
-    background-color: #fafafa;
-    color: #ccc;
+    background-color: var(--hover-bg);
+    color: var(--text-secondary);
 }
 
 .month-day-cell.today {
@@ -305,7 +334,7 @@ body {
 }
 
 .year-month-card {
-    border: 1px solid #eee;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 10px;
 }
@@ -326,4 +355,126 @@ body {
 
 .mini-day {
     padding: 2px;
+}
+
+/* Event Modal */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 100; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.4); 
+}
+
+.modal-content {
+    background-color: var(--container-bg);
+    margin: 15% auto; 
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.close-modal {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+    color: var(--text-color);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal h2 { margin-bottom: 20px; }
+
+.form-group { margin-bottom: 15px; }
+
+.form-group label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px;}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-sizing: border-box; 
+    font-size: 14px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.save-btn {
+    background-color: #2ecc71;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    background-color: #e74c3c;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Event Styles */
+.event-item {
+    font-size: 11px;
+    padding: 2px 4px;
+    margin: 2px;
+    border-radius: 3px;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.month-day-cell .event-item {
+    margin-bottom: 2px;
+}
+
+/* Floating Add Button */
+.add-event-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: #2abcff; /* Brand Blue */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 90;
+    transition: transform 0.2s;
+}
+
+.add-event-btn:hover {
+    transform: scale(1.1);
+    background-color: #0099e5;
 }
