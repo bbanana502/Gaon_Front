@@ -114,33 +114,8 @@ def get_timetable():
 
     final_timetable = []
     
-    # Define exact detailed schedule based on user request
-    schedule_def = [
-        {"time": "06:50 - 07:30", "event": "Wake Up / School Arrival", "type": "life"},
-        {"time": "07:30 - 08:10", "event": "Breakfast", "type": "food"},
-        {"time": "08:10 - 08:30", "event": "Morning Self Study", "type": "study"},
-        {"time": "08:30 - 08:40", "event": "Prophet / Break", "type": "break"}, # User didn't specify what's here, assumes break
-        {"time": "08:40 - 09:30", "event": "Period 1", "type": "class", "period": 1},
-        {"time": "09:30 - 09:40", "event": "Break", "type": "break"},
-        {"time": "09:40 - 10:30", "event": "Period 2", "type": "class", "period": 2},
-        {"time": "10:30 - 10:40", "event": "Break", "type": "break"},
-        {"time": "10:40 - 11:30", "event": "Period 3", "type": "class", "period": 3},
-        {"time": "11:30 - 11:40", "event": "Break", "type": "break"},
-        {"time": "11:40 - 12:30", "event": "Period 4", "type": "class", "period": 4},
-        {"time": "12:30 - 13:20", "event": "Lunch Time", "type": "food"},
-        {"time": "13:20 - 14:10", "event": "Period 5", "type": "class", "period": 5},
-        {"time": "14:10 - 14:20", "event": "Break", "type": "break"},
-        {"time": "14:20 - 15:10", "event": "Period 6", "type": "class", "period": 6},
-        {"time": "15:10 - 15:20", "event": "Break", "type": "break"},
-        {"time": "15:20 - 16:10", "event": "Period 7", "type": "class", "period": 7},
-        {"time": "16:10 - 16:30", "event": "Cleaning Time", "type": "life"},
-        {"time": "16:30 - 18:10", "event": "After School (8-9 Period)", "type": "study"},
-        {"time": "18:10 - 19:00", "event": "Dinner Time", "type": "food"},
-        {"time": "19:00 - 20:40", "event": "Night Self Study (10-11 Period)", "type": "study"},
-        {"time": "20:40 - 21:00", "event": "Dorm Entry", "type": "life"},
-        {"time": "21:00 - 23:00", "event": "Roll Call / Rest", "type": "life"},
-        {"time": "23:00 - 23:01", "event": "Lights Out", "type": "life"}
-    ]
+    # Use global translated schedule
+    schedule_def = DAILY_SCHEDULE
 
     for item in schedule_def:
         subject = item['event']
