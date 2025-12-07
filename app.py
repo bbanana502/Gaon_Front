@@ -76,12 +76,28 @@ def menu_page():
 
 # --- Helper Functions ---
 
+from functools import lru_cache
+import time
+
+# --- Helper Functions ---
+
 def clean_dish_name(dish_name):
     # Remove allergy info (e.g., "Rice(1.2.3)" -> "Rice")
     return re.sub(r'\([0-9\.]+\)', '', dish_name).replace('*', '')
 
-def is_time_in_range(start_str, end_str):
-    now = datetime.datetime.now().time()
+def is_time_in_range(start_str, end_str, target_date_str=None):
+    """
+    Checks if current time is within range.
+    If target_date_str is provided, it must match today's date for this to potentially be true.
+    """
+    now_dt = datetime.datetime.now()
+    today_str = now_dt.strftime('%Y%m%d')
+    
+    # If looking at a different date, nothing is "current"
+    if target_date_str and target_date_str != today_str:
+        return False
+
+    now = now_dt.time()
     try:
         start = datetime.datetime.strptime(start_str, "%H:%M").time()
         end = datetime.datetime.strptime(end_str, "%H:%M").time()
@@ -89,27 +105,39 @@ def is_time_in_range(start_str, end_str):
     except:
         return False
 
+# --- Cached Data Fetchers ---
+# Cache up to 128 different combinations (Date+Grade+Class)
+# Since NEIS data doesn't change minutely, this is safe. 
+# Restarting app clears cache.
+
+@lru_cache(maxsize=128)
+def fetch_neis_timetable_cached(date_str, grade, class_nm):
+    url = f"{BASE_URL}hisTimetable?{NEIS_API_KEY}&ALL_TI_YMD={date_str}&GRADE={grade}&CLASS_NM={class_nm}"
+    # Let exceptions propagate so they aren't cached
+    response = requests.get(url, timeout=10)
+    response.raise_for_status()
+    json_resp = response.json()
+    
+    neis_data = {}
+    if 'hisTimetable' in json_resp:
+        rows = json_resp['hisTimetable'][1]['row']
+        for row in rows:
+            neis_data[int(row['PERIO'])] = row['ITRT_CNTNT']
+    return neis_data
+
 # --- API Endpoints ---
 
 @app.route('/api/timetable')
 def get_timetable():
     grade = request.args.get('grade', '1') # Default Grade 1
     class_nm = request.args.get('class', '1') # Default Class 1
+    date_str = request.args.get('date', datetime.datetime.now().strftime('%Y%m%d')) # Default Today
     
-    today = datetime.datetime.now().strftime('%Y%m%d')
-    # Filter by Grade and Class for NEIS
-    url = f"{BASE_URL}hisTimetable?{NEIS_API_KEY}&ALL_TI_YMD={today}&GRADE={grade}&CLASS_NM={class_nm}"
-    
+    # Use cached function, handle failures gracefully
     try:
-        neis_data = {}
-        response = requests.get(url)
-        json_resp = response.json()
-        
-        if 'hisTimetable' in json_resp:
-            rows = json_resp['hisTimetable'][1]['row']
-            for row in rows:
-                neis_data[int(row['PERIO'])] = row['ITRT_CNTNT']
-    except Exception:
+        neis_data = fetch_neis_timetable_cached(date_str, grade, class_nm)
+    except Exception as e:
+        print(f"Timetable API Error (Not Cached): {e}")
         neis_data = {}
 
     final_timetable = []
@@ -124,11 +152,9 @@ def get_timetable():
         # Override Subject if it's a class and we have NEIS data
         if item.get('type') == 'class':
             period_num = item.get('period')
-            # Override name with "Period X" placeholder if no specific name provided in struct, 
-            # though global struct has no "name" for classes usually, let's allow fallback.
             if period_num in neis_data:
                 subject = neis_data[period_num]
-            elif not subject: # If subject is empty strings (for classes in global dict?)
+            elif not subject: 
                  subject = f"{period_num}교시"
         
         # Construct time string from start/end
@@ -141,7 +167,7 @@ def get_timetable():
             "time": time_str,
             "subject": subject,
             "teacher": teacher,
-            "is_current": is_time_in_range(start, end),
+            "is_current": is_time_in_range(start, end, date_str),
             "is_special": item.get('type') in ['food', 'life'], 
             "type": item.get('type') 
         })
@@ -160,7 +186,6 @@ def parse_dish(dish_string):
     """
     Parses a dish string like "Rice(1.2)" into name and list of allergies.
     """
-    # Extract allergy numbers: (1.2.3)
     match = re.search(r'\(([\d\.]+)\)', dish_string)
     allergies = []
     clean_name = dish_string
@@ -170,7 +195,6 @@ def parse_dish(dish_string):
         for code in codes:
             if code in ALLERGY_MAP:
                 allergies.append(ALLERGY_MAP[code])
-        # Remove the code part from name for display
         clean_name = re.sub(r'\([0-9\.]+\)', '', dish_string).replace('*', '')
         
     return {
@@ -178,26 +202,34 @@ def parse_dish(dish_string):
         "allergies": allergies
     }
 
-@app.route('/api/meals')
-def get_meals():
-    today = datetime.datetime.now().strftime('%Y%m%d')
-    url = f"{BASE_URL}mealServiceDietInfo?{NEIS_API_KEY}&MLSV_YMD={today}"
+@lru_cache(maxsize=128)
+def fetch_neis_meals_cached(date_str):
+    url = f"{BASE_URL}mealServiceDietInfo?{NEIS_API_KEY}&MLSV_YMD={date_str}"
+    # Propagate exceptions to avoid caching failures
+    response = requests.get(url, timeout=10)
+    response.raise_for_status()
+    data = response.json()
     
     meals = {
         "breakfast": {"menu": [], "calories": "0 Kcal"},
         "lunch": {"menu": [], "calories": "0 Kcal"},
         "dinner": {"menu": [], "calories": "0 Kcal"}
     }
+                    
+    # Wait, `parse_dish` is defined around line 170. This block replaces line 199. 
+    # So `fetch_neis_meals_cached` will be above `parse_dish`. This will error if I call `parse_dish` inside it immediately if not careful.
+    # But I'm defining the function. The content isn't executed until `get_meals` calls it.
+    # By the time `get_meals` calls it, `parse_dish` (global) will be defined. So it is SAFE.
     
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
         data = response.json()
         
         if 'mealServiceDietInfo' in data:
             rows = data['mealServiceDietInfo'][1]['row']
             
             for row in rows:
-                # MMEAL_SC_CODE: 1=Breakfast, 2=Lunch, 3=Dinner
                 code = row['MMEAL_SC_CODE']
                 meal_type = ""
                 if code == "1": meal_type = "breakfast"
@@ -206,19 +238,107 @@ def get_meals():
                 
                 if meal_type:
                     dish_str = row['DDISH_NM']
-                    # Split by <br/> -> parse each dish
                     parsed_menu = [parse_dish(d.strip()) for d in dish_str.split('<br/>') if d.strip()]
                     meals[meal_type]["menu"] = parsed_menu
                     meals[meal_type]["calories"] = row.get('CAL_INFO', '0 Kcal')
-
-        return jsonify({
-            "date": today,
-            "meals": meals
-        })
-
     except Exception as e:
         print(f"Error fetching meals: {e}")
-        return jsonify({"date": today, "meals": meals})
+        
+    return meals
+
+@app.route('/api/meals')
+def get_meals():
+    date_str = request.args.get('date', datetime.datetime.now().strftime('%Y%m%d')) # Default Today
+    
+    # Use cached function
+    meals = fetch_neis_meals_cached(date_str)
+
+    return jsonify({
+        "date": date_str,
+        "meals": meals
+    })
+
+import os
+import google.generativeai as genai
+
+# ... (Previous code)
+
+# Configure Gemini
+# Configure Gemini
+# NOTE: API Key provided by user
+GEMINI_API_KEY = "AIzaSyA29PHUX7dlyev9Q5OXCWlracAMfJ23ksc"
+
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+
+@app.route('/api/chat', methods=['POST'])
+def chat_endpoint():
+    user_message = request.json.get('message', '')
+    
+    if not GEMINI_API_KEY:
+        return jsonify({"response": "죄송합니다. 서버에 Gemini API Key가 설정되지 않아 AI와 대화할 수 없습니다."})
+
+    try:
+        # 1. Fetch Context Data (Today)
+        today_str = datetime.datetime.now().strftime('%Y%m%d')
+        
+        # We can reuse our existing functions if we refactor them to return data dictionaries 
+        # instead of JSON responses, but for simplicity/speed let's make internal helper calls or just quick fetch.
+        # Actually, get_meals returns a Response object (jsonify). 
+        # We should probably do a quick internal fetch logic since we are within the same app.
+        
+        # --- Internal Fetch Logic for Context ---
+        
+        # Meal Context
+        meal_url = f"{BASE_URL}mealServiceDietInfo?{NEIS_API_KEY}&MLSV_YMD={today_str}"
+        meal_context = "오늘의 급식 정보가 없습니다."
+        try:
+            m_resp = requests.get(meal_url).json()
+            if 'mealServiceDietInfo' in m_resp:
+                rows = m_resp['mealServiceDietInfo'][1]['row']
+                meal_context = "오늘의 급식:\n"
+                for row in rows:
+                    meal_name = row['MMEAL_SC_NM'] # e.g. 조식
+                    dish_nm = row['DDISH_NM'].replace('<br/>', ', ')
+                    dish_clean = re.sub(r'\([0-9\.]+\)', '', dish_nm) # Remove allergy codes for AI context to save tokens/cleanliness
+                    meal_context += f"- {meal_name}: {dish_clean}\n"
+        except:
+            pass
+
+        # Timetable Context (Default Grade 1 Class 1 for generic context, or we could ask user)
+        # For now, let's provide a generic 1-1 timetable or just say "I can look up timetables if you tell me your grade/class".
+        # Let's just provide the "Daily Schedule" structure (Periods) which is fixed.
+        schedule_context = "오늘의 일과표:\n"
+        for item in DAILY_SCHEDULE:
+            schedule_context += f"- {item['start']}~{item['end']}: {item['name'] if 'name' in item else str(item.get('period'))+'교시'}\n"
+
+        # 2. System Prompt
+        system_prompt = f"""
+        당신은 부산소프트웨어마이스터고의 AI 비서 '가온(Gaon)'입니다.
+        학생들의 학교 생활을 돕기 위해 존재합니다. 친절하고 명랑한 말투를 사용하세요.
+        이모지를 적절히 사용하여 생동감 있게 대답해 주세요.
+
+        [오늘의 정보]
+        날짜: {today_str}
+        {meal_context}
+        
+        [기본 일과 시간표]
+        {schedule_context}
+        
+        학생의 질문에 위 정보를 바탕으로 답변해 주세요. 정보가 없으면 모른다고 솔직하게 말하세요.
+        """
+        
+        # 3. Call Gemini
+        # Using 'gemini-flash-latest' as it was confirmed available in the user's account
+        model = genai.GenerativeModel('gemini-flash-latest')
+        chat = model.start_chat(history=[])
+        response = chat.send_message(system_prompt + "\n\n학생 질문: " + user_message)
+        
+        return jsonify({"response": response.text})
+
+    except Exception as e:
+        print(f"AI Error: {e}")
+        return jsonify({"response": "죄송합니다. AI 서비스에 일시적인 문제가 발생했습니다."})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)

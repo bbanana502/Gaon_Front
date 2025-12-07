@@ -4,101 +4,239 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gaon - Profile</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Use home.css for base layout -->
+    <link rel="stylesheet" href="../static/home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Profile Specific Styles inheriting from card framework */
+        .page-content {
+            padding: 40px 20px;
+            max-width: 700px; /* Slightly wider for form */
+            margin: 0 auto;
+            min-height: calc(100vh - 140px);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .profile-card {
+            background-color: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .profile-header-bg {
+            height: 120px;
+            background: linear-gradient(135deg, #7B1FA2 0%, #9C27B0 100%); /* Purple Theme */
+            position: relative;
+        }
+
+        .profile-content {
+            padding: 0 40px 40px 40px;
+            margin-top: -60px; /* Overlap header */
+            position: relative;
+        }
+
+        .profile-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 30px;
+        }
+
+        .avatar-area {
+            position: relative;
+        }
+
+        #profileAvatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            border: 5px solid var(--card-bg);
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .edit-btn {
+            background-color: #9C27B0; /* Purple */
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(156, 39, 176, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .edit-btn:hover {
+            background-color: #7B1FA2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(156, 39, 176, 0.4);
+        }
+
+        .user-info-display h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        .user-info-display p {
+            margin: 5px 0 0 0;
+            color: var(--text-secondary);
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--hover-bg);
+            color: var(--text-color);
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .form-input:disabled {
+            background-color: rgba(0,0,0,0.03);
+            color: var(--text-secondary);
+            border-color: transparent;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #9C27B0;
+            background-color: var(--card-bg);
+            box-shadow: 0 0 0 3px rgba(156, 39, 176, 0.1);
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* Dark Mode overrides handled by generic vars but specific tweaks: */
+        .dark-mode .profile-header-bg {
+            background: linear-gradient(135deg, #4A148C 0%, #311B92 100%);
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <a href="/home" class="icon-item" title="Home">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-            </a>
-            
-            <div class="icon-item settings-icon" style="margin-top: auto; margin-bottom: 20px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <!-- Unified Header -->
+        <header class="header">
+            <div class="logo-area">
+                <a href="/home" class="logo">
+                    <img src="../static/logo.svg" alt="Gaon" style="height: 40px;">
+                </a>
+                <nav class="main-nav">
+                    <a href="/chat" class="nav-item chat-nav">채팅</a>
+                    <a href="/timetable" class="nav-item timetable-nav">시간표</a>
+                    <a href="/menu" class="nav-item menu-nav">급식</a>
+                    <a href="/profile" class="nav-item active profile-nav">설정</a>
+                </nav>
             </div>
-        </div>
+            <div class="user-area">
+                <a href="/profile">
+                    <div class="profile-pic"></div>
+                </a>
+            </div>
+        </header>
 
-        <div class="main-content">
-            <!-- Header -->
-            <header class="header">
-                 <div class="brand">
-                     <a href="/home" class="logo">
-                         <img src="../static/logo.svg" alt="Gaon" style="height: 30px;">
-                     </a>
-                 </div>
-                 <div class="header-right">
-                     <button class="icon-btn" id="themeToggleBtn" style="background: none; border: 1px solid var(--border-color); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-color);"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                     </button>
-                     <div class="header-profile-pic"></div>
-                 </div>
-            </header>
-
-            <div class="content-body">
-                <!-- Profile Card -->
-                <div class="profile-card">
-                    <div class="profile-header">
-                        <div class="profile-info">
+        <div class="page-content">
+            <div class="profile-card">
+                <div class="profile-header-bg"></div>
+                
+                <div class="profile-content">
+                    <div class="profile-top">
+                        <div class="avatar-area">
                             <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
-                            <div class="avatar" id="profileAvatar"></div>
-                            <div class="info-text">
-                                <h2>Alexa Rawles</h2>
-                                <p>alexarawles@gmail.com</p>
-                            </div>
+                            <div id="profileAvatar"></div>
                         </div>
-                        <button class="edit-btn" id="editBtn">Edit</button>
+                        <button class="edit-btn" id="editBtn">수정</button>
                     </div>
 
-                    <div class="form-section">
-                        <div class="left-form">
-                            <div class="form-group">
+                    <div class="user-info-display">
+                        <h2>Alexa Rawles</h2>
+                        <p>alexarawles@gmail.com</p>
+                    </div>
+
+                    <form class="profile-form">
+                        <div class="section-title">기본 정보</div>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
                                 <label>닉네임</label>
-                                <input type="text" id="nicknameInput" placeholder="Enter your nickname" disabled>
+                                <input type="text" id="nicknameInput" class="form-input" placeholder="닉네임을 입력하세요" disabled>
                             </div>
 
                             <div class="form-group">
                                 <label>성별</label>
-                                <div class="select-wrapper">
-                                    <select id="genderSelect" disabled>
-                                        <option value="" disabled selected>Select Gender</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
+                                <select id="genderSelect" class="form-input" disabled>
+                                    <option value="" disabled selected>선택</option>
+                                    <option value="male">남성</option>
+                                    <option value="female">여성</option>
+                                    <option value="other">기타</option>
+                                </select>
                             </div>
 
                             <div class="form-group">
                                 <label>언어</label>
-                                <div class="select-wrapper">
-                                    <select id="languageSelect" disabled>
-                                        <option value="" disabled selected>Select Language</option>
-                                        <option value="ko">Korean</option>
-                                        <option value="en">English</option>
-                                        <option value="jp">Japanese</option>
-                                        <option value="cn">Chinese</option>
-                                    </select>
-                                </div>
+                                <select id="languageSelect" class="form-input" disabled>
+                                    <option value="" disabled selected>선택</option>
+                                    <option value="ko">한국어</option>
+                                    <option value="en">English</option>
+                                </select>
                             </div>
                         </div>
-                        
-                        <div class="right-info">
-                            <h3>이메일 주소</h3>
-                            <div class="email-display">
-                                <div class="email-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                                </div>
-                                <div class="email-details">
-                                    <span class="email-addr">alexarawles@gmail.com</span>
-                                    <span class="email-age">1 month ago</span>
-                                </div>
-                            </div>
-                            <button class="change-email-btn" id="changeEmailBtn">이메일 주소 변경</button>
+
+                        <div class="section-title">계정 설정</div>
+                         <div class="form-grid">
+                             <div class="form-group full-width">
+                                 <label>이메일</label>
+                                 <input type="email" class="form-input" value="alexarawles@gmail.com" disabled>
+                             </div>
+                             <div class="form-group full-width">
+                                 <button class="edit-btn" style="background:transparent; color:var(--text-color); border:1px solid var(--border-color); width:100%;">로그아웃</button>
+                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

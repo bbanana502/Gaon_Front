@@ -4,55 +4,337 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gaon - Chat</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='chat.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Use home.css for base layout/header -->
+    <link rel="stylesheet" href="../static/home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Page Setup */
+        .page-content {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: calc(100vh - 80px); /* Fill remaining height */
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Layout Container */
+        .chat-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            gap: 25px;
+        }
+
+        /* Sidebar - Glassy & Clean */
+        .chat-sidebar {
+            width: 280px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05); /* Premium Shadow */
+            transition: all 0.3s ease;
+        }
+
+        .new-chat-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #EF6C00 0%, #FF9800 100%); /* Orange Gradient */
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); /* Orange Shadow */
+        }
+        .new-chat-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+
+        .history-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 5px; /* Space for scrollbar */
+        }
+        
+        /* Custom Scrollbar */
+        .history-list::-webkit-scrollbar { width: 4px; }
+        .history-list::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
+
+        .history-item {
+            padding: 12px 16px;
+            border-radius: 14px;
+            color: var(--text-color);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid transparent;
+        }
+        
+        .history-item:hover {
+            background-color: var(--hover-bg);
+            transform: translateX(4px);
+        }
+        
+        .history-item.active {
+            background-color: rgba(255, 152, 0, 0.1); /* Orange Tint */
+            color: #EF6C00;
+            font-weight: 700;
+            border-color: rgba(255, 152, 0, 0.2);
+        }
+        .dark-mode .history-item.active {
+            background-color: rgba(255, 152, 0, 0.15);
+            color: #FFB74D;
+        }
+
+        .history-item::before {
+            content: "💬";
+            font-size: 14px;
+            opacity: 0.6;
+        }
+
+        /* Main Chat Area - Retaining the Premium Card Look */
+        .chat-main {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            min-width: 0; 
+        }
+
+        .chat-card {
+            background-color: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            height: 100%; 
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chat-header {
+            padding: 20px 25px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .chat-title h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chat-title h3::before { content: "🤖"; font-size: 24px; }
+
+        .messages-area {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            background-color: #F8F9FA;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .dark-mode .messages-area { background-color: #121212; }
+
+        /* Bubbles */
+        .message {
+            max-width: 75%;
+            padding: 14px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        
+        .avatar {
+            font-size: 20px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        
+        .message .text {
+            word-break: break-word; 
+        }
+
+        /* AI Bubble */
+        .ai-message {
+            align-self: flex-start;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border-bottom-left-radius: 4px;
+        }
+
+        /* User Bubble */
+        .user-message {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #FF7043 0%, #FF5722 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 5px 20px rgba(255, 87, 34, 0.25);
+            flex-direction: row-reverse; /* Avatar on right */
+        }
+        .user-message .avatar { display: none; } /* Hide user avatar for cleaner look usually, or keep it */
+
+        /* Input Area */
+        .input-area {
+            padding: 20px;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: var(--hover-bg);
+            padding: 10px 20px;
+            border-radius: 40px;
+            border: 1px solid var(--border-color);
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+        .input-wrapper:focus-within {
+            border-color: #FF9800; /* Orange Border */
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.15);
+        }
+
+        #chatInput {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 16px;
+            resize: none;
+            height: 24px;
+            max-height: 120px;
+        }
+
+        #sendBtn {
+            background: var(--food-accent);
+            color: white;
+            border: none;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        #sendBtn:hover { transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        #sendBtn:disabled { background: #E0E0E0; cursor: not-allowed; transform: none; }
+
+        .loading-dots:after {
+            content: '.'; animation: dots 1.5s steps(5, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: '.'; } 40% { content: '..'; } 60%, 100% { content: '...'; }
+        }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            .chat-layout { gap: 10px; }
+            .chat-sidebar { display: none; /* Mobile Drawer later */ }
+        }
+    </style>
 </head>
 <body>
-    <div class="chat-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <a href="/home" class="logo-link" style="display: block; margin-bottom: 20px; text-align: center;">
-                <img src="../static/logo.svg" alt="Gaon" style="height: 30px;">
-            </a>
-            <div class="new-chat-btn" id="newChatBtn">
-                + New Chat
+    <div class="container">
+        <!-- Header (Unified) -->
+        <header class="header">
+            <div class="logo-area">
+                <a href="/home" class="logo">
+                    <img src="../static/logo.svg" alt="Gaon" style="height: 40px;">
+                </a>
+                <nav class="main-nav">
+                    <a href="/chat" class="nav-item active chat-nav">채팅</a>
+                    <a href="/timetable" class="nav-item timetable-nav">시간표</a>
+                    <a href="/menu" class="nav-item menu-nav">급식</a>
+                    <a href="/profile" class="nav-item profile-nav">설정</a>
+                </nav>
             </div>
-            <div class="history-list" id="historyList">
-                <!-- Chat history items will be injected here -->
+            <div class="user-area">
+                <a href="/profile">
+                    <div class="profile-pic"></div>
+                </a>
             </div>
-            <div class="sidebar-footer">
-                <!-- Footer content -->
-            </div>
-        </div>
+        </header>
 
-        <!-- Main Chat Area -->
-        <div class="main-chat">
-            <div class="chat-header">
-                <div class="chat-title">
-                    <h3>Gaon AI</h3>
-                </div>
-                <div class="header-right">
-                    <button class="icon-btn" id="themeToggleBtn" style="background: none; border: 1px solid var(--border-color); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-color);"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                     </button>
-                </div>
-            </div>
-            
-            <div class="messages-area" id="messagesArea">
-                <!-- Messages will appear here -->
-                <div class="message ai-message">
-                    <div class="avatar">G</div>
-                    <div class="text">Hello! I am Gaon AI. How can I help you today?</div>
-                </div>
-            </div>
-
-            <div class="input-area">
-                <div class="input-wrapper">
-                    <textarea id="chatInput" placeholder="Send a message..."></textarea>
-                    <button id="sendBtn">
-                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        <div class="page-content">
+            <div class="chat-layout">
+                <!-- Sidebar -->
+                <aside class="chat-sidebar">
+                    <button id="newChatBtn" class="new-chat-btn">
+                        <span>+</span> 새로운 대화
                     </button>
-                </div>
+                    <div class="history-list" id="historyList">
+                        <!-- History Rendered Here -->
+                    </div>
+                </aside>
+
+                <!-- Chat Card -->
+                <main class="chat-main">
+                    <div class="chat-card">
+                        <div class="chat-header">
+                            <div class="chat-title">
+                                <h3>Gaon AI</h3>
+                            </div>
+                        </div>
+                        
+                        <div class="messages-area" id="messagesArea">
+                            <div class="message ai-message">
+                                <div class="avatar">🤖</div>
+                                <div class="text">안녕하세요! 가온 AI입니다. 무엇을 도와드릴까요?</div>
+                            </div>
+                        </div>
+
+                        <div class="input-area">
+                            <div class="input-wrapper">
+                                <textarea id="chatInput" placeholder="메시지를 입력하세요..."></textarea>
+                                <button id="sendBtn">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </main>
             </div>
         </div>
     </div>

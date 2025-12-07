@@ -7,154 +7,273 @@
     <link rel="stylesheet" href="../static/home.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* Premium Timetable Design - Colorful & Vibrant */
         .page-content {
-            padding: 40px;
-            max-width: 1000px;
+            padding: 30px 20px;
+            max-width: 800px;
             margin: 0 auto;
         }
-        .header-title {
-            margin-bottom: 20px;
-            font-size: 24px;
-            font-weight: 700;
-        }
-        /* Modern Vertical Timetable Layout */
-        .timetable-container {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            padding: 20px;
-            overflow: hidden; /* Contain children */
-        }
-        
-        .timetable-list {
+
+        /* Selector Card - Vibrant Gradient */
+        .selector-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(240,247,255,0.9) 100%);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(33, 150, 243, 0.1);
+            border: 1px solid rgba(33, 150, 243, 0.1);
+            margin-bottom: 25px;
             display: flex;
             flex-direction: column;
-            gap: 0; /* separators handled by border */
+            gap: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .dark-mode .selector-card {
+            background: linear-gradient(135deg, #1e1e1e 0%, #252525 100%);
+            border-color: #333;
         }
 
-        .timetable-row {
-            display: grid;
-            grid-template-columns: 80px 140px 1fr;
-            padding: 16px 10px;
-            border-bottom: 1px solid var(--border-color);
-            align-items: center;
-            transition: background-color 0.2s;
+        .selectors-row {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .select-group {
+            flex: 1;
+            position: relative;
         }
         
-        .timetable-row:last-child {
-            border-bottom: none;
+        .select-group label { display: none; }
+
+        /* Custom Select Styling - Colorful Focus */
+        select {
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: white;
+            border: 2px solid transparent; /* Prepare for gradient border logic or just color */
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 16px;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231976D2' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 18px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .dark-mode select { background-color: #2c2c2c; border-color: #444; }
+
+        select:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(33, 150, 243, 0.15);
+            border-color: #90CAF9;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #1976D2;
+            box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.2);
+        }
+
+        /* Date Control - Blue Accent */
+        .date-control-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(33, 150, 243, 0.08); /* Light Blue Pill */
+            padding: 8px 10px;
+            border-radius: 50px; 
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+            border: 1px solid rgba(33, 150, 243, 0.1);
+        }
+
+        .nav-arrow-sm {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            color: #1976D2;
+            font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+            transition: all 0.2s;
+        }
+        .dark-mode .nav-arrow-sm { background: #333; color: #64B5F6; }
+        
+        .nav-arrow-sm:hover {
+            transform: scale(1.15);
+            background: #1976D2;
+            color: white;
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+        }
+        
+        .date-display-sm {
+            font-size: 16px;
+            font-weight: 800;
+            color: #1565C0; /* Strong Blue */
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+        .dark-mode .date-display-sm { color: #90CAF9; }
+
+        /* Timetable List */
+        .time-slots {
+            display: flex;
+            flex-direction: column;
+            gap: 16px; /* More breathing room */
+        }
+
+        /* Row as Card with Color Accents */
+        .timetable-row {
+            display: grid;
+            grid-template-columns: 70px 80px 1fr; /* Badge, Time, Content */
+            gap: 15px;
+            align-items: center;
+            
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 18px 24px;
+            
+            /* Default: Normal Class (Blue Accent) */
+            border-left: 5px solid #42A5F5; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
         }
         
         .timetable-row:hover {
-            background-color: var(--hover-bg);
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 12px 30px rgba(66, 165, 245, 0.15);
         }
 
-        /* Columns */
-        .col-badge {
-            display: flex;
-            justify-content: center;
+        /* Badge - Gradient */
+        .col-badge { display: flex; justify-content: center; align-items: center; }
+        
+        .period-badge {
+            width: 48px; height: 48px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #42A5F5 0%, #1976D2 100%);
+            color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            box-shadow: 0 4px 10px rgba(33, 150, 243, 0.3);
         }
         
         .col-time {
-            font-family: 'Outfit', sans-serif; /* Monospace-ish look via font choice or just clean sans */
             font-size: 14px;
             color: var(--text-secondary);
-            letter-spacing: 0.5px;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
         }
-        
+
         .col-content {
             display: flex;
             flex-direction: column;
-            gap: 4px;
-        }
-
-        /* Elements */
-        .period-badge {
-            background-color: var(--accent-color);
-            color: white;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 20px; /* Pill shape */
-            min-width: 60px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            justify-content: center;
         }
         
         .subject {
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             color: var(--text-color);
+            margin-bottom: 3px;
         }
         
         .teacher {
             font-size: 13px;
             color: var(--text-secondary);
+            font-weight: 500;
+            background: rgba(0,0,0,0.04);
+            padding: 2px 8px;
+            border-radius: 8px;
+            display: inline-block;
+            width: fit-content;
         }
+        .dark-mode .teacher { background: rgba(255,255,255,0.05); }
 
-        /* Active State */
-        .result-row.current-time { /* 'result-row' just for specificity if needed, using .timetable-row.current-time */
-            background-color: rgba(52, 152, 219, 0.08);
-            position: relative;
-            border-radius: 8px; /* Slight roundness for active item */
-            border-bottom: none; /* Remove separator for cleaner look */
-            margin: 4px 0; /* Popped out slightly */
-            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.15);
+        /* Current Time Active State - Pulsing */
+        .timetable-row.current-time {
+            border: 2px solid #2979FF;
+            border-left: 8px solid #2979FF;
+            background: linear-gradient(90deg, rgba(41, 121, 255, 0.05) 0%, rgba(255,255,255,0) 100%);
+            box-shadow: 0 10px 40px rgba(41, 121, 255, 0.2);
+            animation: pulse-border 2s infinite;
         }
         
-        .timetable-row.current-time::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 10%;
-            bottom: 10%;
-            width: 4px;
-            background-color: var(--accent-color);
-            border-radius: 0 4px 4px 0;
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(41, 121, 255, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(41, 121, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(41, 121, 255, 0); }
         }
 
-        /* Special Rows (Dinner, etc) custom Badges */
-        .type-food .period-badge { background-color: #66bb6a; } /* Green */
-        .type-life .period-badge { background-color: #78909c; } /* Grey-Blue */
-        .type-study .period-badge { background-color: #5c6bc0; } /* Indigo */
+        /* --- Color Variants for Types --- */
         
-        /* Break Styling - Slimmer */
+        /* Food: Fresh Green */
+        .timetable-row.type-food { border-left-color: #66BB6A; }
+        .timetable-row.type-food .period-badge {
+            background: linear-gradient(135deg, #66BB6A 0%, #2E7D32 100%);
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+            font-size: 24px; /* Icon size */
+        }
+        
+        /* Life/Dorm: Orange/Amber */
+        .timetable-row.type-life { border-left-color: #FFA726; }
+        .timetable-row.type-life .period-badge {
+            background: linear-gradient(135deg, #FFA726 0%, #EF6C00 100%);
+            box-shadow: 0 4px 10px rgba(255, 152, 0, 0.3);
+            font-size: 22px;
+        }
+        
+        /* Study/Self-Study: Indigo/Purple */
+        .timetable-row.type-study { border-left-color: #7E57C2; }
+        .timetable-row.type-study .period-badge {
+            background: linear-gradient(135deg, #AB47BC 0%, #7B1FA2 100%);
+            box-shadow: 0 4px 10px rgba(156, 39, 176, 0.3);
+            font-size: 22px;
+        }
+        
+        /* Break: Gray/Teal */
         .timetable-row.type-break {
-            padding: 8px 10px;
-            background-color: rgba(0,0,0,0.02);
-            border-bottom: 1px dashed var(--border-color); /* Dashed separator */
+            border-left: 3px dashed #B0BEC5;
+            background: transparent;
+            box-shadow: none;
+            opacity: 0.8;
+            padding: 12px 24px;
         }
-        .dark-mode .timetable-row.type-break {
-            background-color: rgba(255,255,255,0.02);
+        .timetable-row.type-break:hover { opacity: 1; transform: none; background: rgba(0,0,0,0.02); }
+        .timetable-row.type-break .period-badge { display: none; }
+        .timetable-row.type-break .col-badge::after {
+            content: "☕"; font-size: 20px; 
+            filter: grayscale(0.5);
         }
-        .type-break .subject {
-            font-size: 13px;
-            font-style: italic;
-            color: var(--text-secondary);
-            font-weight: 400;
-        }
-        .type-break .col-badge { opacity: 0.3; } /* Dim icon/badge area */
-        .type-break .period-badge { display: none; } /* Hide heavy badge */
-        .type-break .col-badge::after {
-            content: "☕";
-            font-size: 14px;
-        }
-
+        .timetable-row.type-break .subject { color: #78909c; font-weight: 500; font-size: 15px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header (Same as Home) -->
+        <!-- Header -->
         <header class="header">
             <div class="logo-area">
                 <a href="/home" class="logo">
                     <img src="../static/logo.svg" alt="Gaon" style="height: 40px;">
                 </a>
                 <nav class="main-nav">
-                    <a href="/chat" class="nav-item">채팅</a>
-                    <a href="/timetable" class="nav-item active" style="background-color: var(--hover-bg);">시간표</a>
-                    <a href="/menu" class="nav-item">급식</a>
-                    <a href="/profile" class="nav-item">설정</a>
+                    <a href="/chat" class="nav-item chat-nav">채팅</a>
+                    <a href="/timetable" class="nav-item active timetable-nav">시간표</a>
+                    <a href="/menu" class="nav-item menu-nav">급식</a>
+                    <a href="/profile" class="nav-item profile-nav">설정</a>
                 </nav>
             </div>
             <div class="user-area">
@@ -165,32 +284,44 @@
         </header>
 
         <div class="page-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 class="header-title" style="margin-bottom: 0;">시간표</h2>
-                <div class="filters" style="display: flex; gap: 10px;">
-                    <select id="gradeSelect" style="padding: 8px; border-radius: 6px; border: 1px solid var(--border-color);">
-                        <option value="1">1학년</option>
-                        <option value="2">2학년</option>
-                        <option value="3">3학년</option>
-                    </select>
-                    <select id="classSelect" style="padding: 8px; border-radius: 6px; border: 1px solid var(--border-color);">
-                        <option value="1">1반</option>
-                        <option value="2">2반</option>
-                        <option value="3">3반</option>
-                        <option value="4">4반</option>
-                    </select>
+            <!-- Selector Card with Date -->
+            <div class="selector-card">
+                <div class="selectors-row">
+                    <div class="select-group">
+                        <label>학년</label>
+                        <select id="gradeSelect">
+                            <option value="1" selected>1학년</option>
+                            <option value="2">2학년</option>
+                            <option value="3">3학년</option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <label>반</label>
+                        <select id="classSelect">
+                            <option value="1" selected>1반</option>
+                            <option value="2">2반</option>
+                            <option value="3">3반</option>
+                            <option value="4">4반</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Date Nav Integrated -->
+                <div class="date-control-row">
+                    <button class="nav-arrow-sm" onclick="changeDate(-1)">❮</button>
+                    <div class="date-display-sm" id="dateDisplay">Loading...</div>
+                    <button class="nav-arrow-sm" onclick="changeDate(1)">❯</button>
                 </div>
             </div>
-            
-            <div class="timetable-container" id="timetableContainer">
-                <!-- Headers are less needed in list view, or we can add a subtle one. Let's keep it clean list. -->
-                 <div class="table-header" style="display:grid; grid-template-columns: 80px 140px 1fr; padding: 0 10px 10px 10px; border-bottom: 2px solid var(--border-color); color: var(--text-secondary); font-weight:600; font-size:13px; margin-bottom: 5px;">
-                    <div style="text-align:center">구분</div>
-                    <div>시간</div>
-                    <div>활동</div>
-                </div>
-                <div id="timetableRows" class="timetable-list">
-                    <div class="loading">시간표 로딩 중...</div>
+
+            <!-- Timetable List -->
+            <div class="time-slots" id="timeSlots">
+                <!-- Javascript will inject here -->
+                <div class="slot-card">
+                    <div class="period-badge">loading</div>
+                    <div class="slot-info">
+                        <div class="slot-subject">정보를 불러오는 중...</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -198,57 +329,95 @@
     
     <script src="../static/theme.js"></script>
     <script>
+        let currentDate = new Date();
+
+        function formatDate(date) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}${m}${d}`;
+        }
+        
+        function formatDisplayDate(dateStr) {
+            // YYYYMMDD -> YYYY.MM.DD (Day)
+            const y = dateStr.substring(0,4);
+            const m = dateStr.substring(4,6);
+            const d = dateStr.substring(6,8);
+            
+            // Get Day of week
+            const dateObj = new Date(y, parseInt(m)-1, d);
+            const days = ['일', '월', '화', '수', '목', '금', '토'];
+            const dayName = days[dateObj.getDay()];
+            
+            return `${y}.${m}.${d} (${dayName})`;
+        }
+
+        function changeDate(days) {
+            currentDate.setDate(currentDate.getDate() + days);
+            loadTimetable();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const gradeSelect = document.getElementById('gradeSelect');
             const classSelect = document.getElementById('classSelect');
-            
+            const container = document.getElementById('timeSlots');
+            const dateDisplay = document.getElementById('dateDisplay');
+
             function loadTimetable() {
                 const grade = gradeSelect.value;
                 const cls = classSelect.value;
-                const container = document.getElementById('timetableRows');
+                const dateStr = formatDate(currentDate);
                 
-                container.innerHTML = '<div class="loading">시간표 로딩 중...</div>';
-                
-                fetch(`/api/timetable?grade=${grade}&class=${cls}`)
+                // Update Date Display
+                dateDisplay.textContent = `${dateStr.substring(0,4)}.${dateStr.substring(4,6)}.${dateStr.substring(6,8)}`;
+
+                container.innerHTML = `
+                    <div class="slot-card" style="justify-content:center; padding: 40px;">
+                        <div class="slot-subject" style="font-size: 16px; color: #666;">⏳ 시간표를 가져오는 중...</div>
+                    </div>`;
+
+                fetch(`/api/timetable?grade=${grade}&class=${cls}&date=${dateStr}`)
                     .then(response => response.json())
                     .then(data => {
+                        dateDisplay.textContent = formatDisplayDate(dateStr); // Update with day name if possible or just use formatted
+                        
+                        // Clear container
+                        container.innerHTML = '';
+                        
+                        if (!data || data.length === 0) {
+                             container.innerHTML = `
+                                <div class="timetable-container">
+                                    <div class="timetable-list" style="padding: 30px; text-align: center; color: var(--text-secondary);">
+                                        데이터가 없습니다.
+                                    </div>
+                                </div>`;
+                             return;
+                        }
+
                         let html = '';
                         
                         data.forEach(item => {
                             const isCurrent = item.is_current ? 'current-time' : '';
-                            const typeClass = item.type ? `type-${item.type}` : '';
                             
-                            // Display logic
-                            let periodBadge = '';
-                            if(item.period) {
-                                let badgeText = item.period;
-                                if (typeof item.period === 'number') {
-                                    badgeText = `${item.period}교시`;
-                                }
-                                periodBadge = `<span class="period-badge">${badgeText}</span>`;
-                            } else {
-                                // For items without explicit period but have type, map to badge text?
-                                // Actually API returns empty period for Life/Food usually.
-                                // We can infer badge from Name for food/life?
-                                // "Dinner" -> "저녁", "Lunch" -> "점심"
-                                if(item.type === 'food') {
-                                     const name = item.time.includes('07:30') ? "아침" : (item.time.includes('12:30') ? "점심" : "저녁");
-                                     periodBadge = `<span class="period-badge">${name}</span>`;
-                                } else if(item.type === 'life') {
-                                    // Use first word of subject? Or just specific icon?
-                                    // Let's use "일정" (Schedule) or explicit map
-                                    periodBadge = `<span class="period-badge" style="background:#b0bec5">일정</span>`;
-                                }
-                            }
+                            // Colorful Icon/Number Logic
+                            let periodBadge = item.period; 
+                            if (item.type === 'food') periodBadge = '🍚';
+                            else if (item.type === 'life') periodBadge = '🏠';
+                            else if (item.type === 'study') periodBadge = '✏️';
+                            else if (item.is_special) periodBadge = item.subject.substring(0,1);
                             
-                            // Specific Overrides for cleaner look
-                            if(item.subject === "기상") periodBadge = `<span class="period-badge" style="background:#ffb74d">기상</span>`;
-                            if(item.subject === "등교") periodBadge = `<span class="period-badge" style="background:#ffb74d">등교</span>`;
-                            if(item.subject.includes("청소")) periodBadge = `<span class="period-badge" style="background:#4db6ac">청소</span>`;
-                            
+                            // Type classes
+                            let typeClass = '';
+                            if (item.type === 'break') typeClass = 'type-break';
+                            else if (item.type === 'food') typeClass = 'type-food';
+                            else if (item.type === 'life') typeClass = 'type-life';
+                            else if (item.type === 'study') typeClass = 'type-study';
+
                             html += `
                                 <div class="timetable-row ${isCurrent} ${typeClass}">
-                                    <div class="col-badge">${periodBadge}</div>
+                                    <div class="col-badge">
+                                        <div class="period-badge">${periodBadge}</div>
+                                    </div>
                                     <div class="col-time">${item.time}</div>
                                     <div class="col-content">
                                         <div class="subject">${item.subject}</div>
@@ -257,7 +426,7 @@
                                 </div>
                             `;
                         });
-
+                        
                         container.innerHTML = html;
                         
                         // Scroll to current time if exists
@@ -269,7 +438,7 @@
                         }
                     })
                     .catch(err => {
-                        container.innerHTML = '<div class="loading">시간표를 불러오지 못했습니다.</div>';
+                        container.innerHTML = '<div class="slot-subject" style="text-align:center;">⚠️ 시간표를 불러오지 못했습니다.</div>';
                         console.error(err);
                     });
             }
@@ -280,6 +449,9 @@
             // Listen for changes
             gradeSelect.addEventListener('change', loadTimetable);
             classSelect.addEventListener('change', loadTimetable);
+            
+            // Global attach for onclick
+            window.changeDate = changeDate;
         });
     </script>
 </body>

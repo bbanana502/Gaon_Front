@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="../static/home.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-    <style>
         :root {
             --food-accent: #ff7043; /* Soft Orange */
         }
@@ -109,6 +108,41 @@
             opacity: 0.9;
             font-weight: 500;
             color: rgba(255,255,255,0.9); /* Subtle white */
+        }
+        
+        .date-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 4px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+            font-weight: 500;
+        }
+
+        .date-arrow {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s;
+            padding: 0; /* reset */
+        }
+        
+        .date-arrow:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+        
+        .date-arrow:hover {
+            background: rgba(255,255,255,0.4);
         }
         
         .calorie-badge {
@@ -320,10 +354,10 @@
                     <img src="../static/logo.svg" alt="Gaon" style="height: 40px;">
                 </a>
                 <nav class="main-nav">
-                    <a href="/chat" class="nav-item">채팅</a>
-                    <a href="/timetable" class="nav-item">시간표</a>
-                    <a href="/menu" class="nav-item active" style="background-color: var(--hover-bg);">급식</a>
-                    <a href="/profile" class="nav-item">설정</a>
+                    <a href="/chat" class="nav-item chat-nav">채팅</a>
+                    <a href="/timetable" class="nav-item timetable-nav">시간표</a>
+                    <a href="/menu" class="nav-item active menu-nav">급식</a>
+                    <a href="/profile" class="nav-item profile-nav">설정</a>
                 </nav>
             </div>
             <div class="user-area">
@@ -352,7 +386,11 @@
                     <div class="header-top">
                         <div>
                             <h1 class="menu-title" id="mealTitle">아침</h1>
-                            <div class="menu-subtitle" id="menuDate">날짜 로딩 중...</div>
+                            <div class="date-nav">
+                                <button class="date-arrow" onclick="changeDate(-1)">❮</button>
+                                <span id="menuDate">날짜 로딩 중...</span>
+                                <button class="date-arrow" onclick="changeDate(1)">❯</button>
+                            </div>
                         </div>
                         <div class="calorie-badge">
                             <span>🔥</span> <span id="calText">0 Kcal</span>
@@ -390,6 +428,29 @@
     <script src="../static/theme.js"></script>
     <script>
         let allMeals = {};
+        // Current date state: YYYYMMDD
+        let currentDate = new Date();
+        
+        function formatDate(date) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}${m}${d}`;
+        }
+        
+        function formatDisplayDate(dateStr) {
+            // YYYYMMDD -> YYYY.MM.DD (Day)
+            const y = dateStr.substring(0,4);
+            const m = dateStr.substring(4,6);
+            const d = dateStr.substring(6,8);
+            
+            // Get Day of week
+            const dateObj = new Date(y, parseInt(m)-1, d);
+            const days = ['일', '월', '화', '수', '목', '금', '토'];
+            const dayName = days[dateObj.getDay()];
+            
+            return `${y}.${m}.${d} (${dayName})`;
+        }
 
         function closeModal() {
             document.getElementById('detailModal').classList.remove('active');
@@ -423,10 +484,6 @@
                 return;
             }
 
-            // User Requested Thresholds:
-            // 700 -> Green (< 800)
-            // 800 -> Orange (800 - 900)
-            // 900 -> Red (>= 900)
             if (cal < 800) {
                 header.classList.add('header-green');
             } else if (cal < 900) {
@@ -480,6 +537,44 @@
                 }
             });
         }
+        
+        function fetchMeals(dateStr) {
+            const content = document.getElementById('menuContent');
+            content.innerHTML = `
+                <div class="state-container">
+                    <span class="state-icon">⏳</span>
+                    <div>로딩 중...</div>
+                </div>`;
+                
+            fetch(`/api/meals?date=${dateStr}`)
+                .then(response => response.json())
+                .then(data => {
+                    allMeals = data.meals;
+                    
+                    // Update Date Display
+                    document.getElementById('menuDate').textContent = formatDisplayDate(data.date);
+                    
+                    // Determine which tab is active
+                    const activeBtn = document.querySelector('.tab-btn.active');
+                    const currentMeal = activeBtn ? activeBtn.dataset.meal : 'breakfast';
+                    
+                    renderMeal(currentMeal);
+                })
+                .catch(err => {
+                    console.error(err);
+                    content.innerHTML = `
+                        <div class="state-container">
+                            <span class="state-icon">⚠️</span>
+                            <div>정보를 불러오지 못했습니다.</div>
+                        </div>`;
+                });
+        }
+        
+        function changeDate(days) {
+            currentDate.setDate(currentDate.getDate() + days);
+            const dateStr = formatDate(currentDate);
+            fetchMeals(dateStr);
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             // Tab Logic
@@ -495,48 +590,28 @@
                 });
             });
             
-            // Fetch API
-            fetch('/api/meals')
-                .then(response => response.json())
-                .then(data => {
-                    allMeals = data.meals;
-                    
-                    // Update Date
-                    if(data.date) {
-                        const y = data.date.substring(0,4);
-                        const m = data.date.substring(4,6);
-                        const d = data.date.substring(6,8);
-                        document.getElementById('menuDate').textContent = `${y}.${m}.${d}`;
-                    }
-
-                    // Determine current meal based on time for initial load
-                    const hour = new Date().getHours();
-                    let currentMeal = 'breakfast';
-                    if (hour >= 8 && hour < 14) currentMeal = 'lunch';
-                    else if (hour >= 14) currentMeal = 'dinner';
-                    
-                    // Activate correct tab button
-                    document.querySelectorAll('.tab-btn').forEach(b => {
-                        b.classList.remove('active');
-                        if(b.dataset.meal === currentMeal) b.classList.add('active');
-                    });
-                    
-                    renderMeal(currentMeal);
-                    // Initial header color set by renderMeal
-                })
-                .catch(err => {
-                    console.error(err);
-                    document.getElementById('menuContent').innerHTML = `
-                        <div class="state-container">
-                            <span class="state-icon">⚠️</span>
-                            <div>정보를 불러오지 못했습니다.</div>
-                        </div>`;
-                });
+            // Initial Load logic
+            const hour = new Date().getHours();
+            let startMeal = 'breakfast';
+            if (hour >= 8 && hour < 14) startMeal = 'lunch';
+            else if (hour >= 14) startMeal = 'dinner';
+            
+            // Set initial active tab
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active');
+                if(b.dataset.meal === startMeal) b.classList.add('active');
+            });
+            
+            // Fetch initial data (Today)
+            fetchMeals(formatDate(currentDate));
                 
             // Modal close on background click
             document.getElementById('detailModal').addEventListener('click', (e) => {
                 if(e.target === document.getElementById('detailModal')) closeModal();
             });
+            
+            // Attach Nav Listeners (injected via HTML below, but making sure functions are global)
+            window.changeDate = changeDate;
         });
     </script>
 </html>
