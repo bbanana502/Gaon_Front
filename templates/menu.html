@@ -423,10 +423,13 @@
                 return;
             }
 
-            // Thresholds: < 900 Green, 900-1100 Orange, > 1100 Red
-            if (cal < 900) {
+            // User Requested Thresholds:
+            // 700 -> Green (< 800)
+            // 800 -> Orange (800 - 900)
+            // 900 -> Red (>= 900)
+            if (cal < 800) {
                 header.classList.add('header-green');
-            } else if (cal < 1100) {
+            } else if (cal < 900) {
                 header.classList.add('header-orange');
             } else {
                 header.classList.add('header-red');
