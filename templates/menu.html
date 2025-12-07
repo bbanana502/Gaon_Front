@@ -7,17 +7,18 @@
     <link rel="stylesheet" href="../static/home.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+    <style>
         :root {
             --food-accent: #ff7043; /* Soft Orange */
         }
         
         .page-content {
             padding: 40px 20px;
-            max-width: 600px; /* Centered narrow card */
+            max-width: 600px;
             margin: 0 auto;
             min-height: calc(100vh - 140px);
             display: flex;
-            align-items: flex-start; /* Top align usually better than center for lists */
+            align-items: flex-start;
             justify-content: center;
         }
         
@@ -27,22 +28,54 @@
             border-radius: 24px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.08);
             border: 1px solid var(--border-color);
-            padding: 0; /* Header image or full bleed header */
+            padding: 0;
             width: 100%;
             overflow: hidden;
             position: relative;
-            transition: transform 0.3s ease;
+        }
+
+        /* Tabs */
+        .meal-tabs {
+            display: flex;
+            background-color: rgba(0,0,0,0.03);
+            border-bottom: 1px solid var(--border-color);
         }
         
-        .menu-card:hover {
-            transform: translateY(-5px);
+        .tab-btn {
+            flex: 1;
+            padding: 20px;
+            border: none;
+            background: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .tab-btn.active {
+            color: var(--food-accent);
+            background-color: var(--card-bg);
+        }
+        
+        .tab-btn.active::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--food-accent);
+        }
+        
+        .meal-icon {
+            margin-right: 5px;
         }
 
         /* Card Header */
         .card-header {
-            background: linear-gradient(135deg, #FF8A65 0%, #FF7043 100%);
             padding: 30px;
-            color: white;
             position: relative;
         }
         
@@ -54,7 +87,7 @@
         }
         
         .menu-title {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
             margin: 0;
             display: flex;
@@ -63,27 +96,28 @@
         }
         
         .menu-subtitle {
-            font-size: 16px;
-            opacity: 0.9;
+            font-size: 14px;
+            opacity: 0.7;
             font-weight: 500;
+            color: var(--text-secondary);
         }
         
         .calorie-badge {
-            background-color: rgba(255,255,255,0.2);
-            backdrop-filter: blur(5px);
+            background-color: rgba(255, 112, 67, 0.1);
+            color: var(--food-accent);
             padding: 6px 14px;
             border-radius: 30px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         /* Card Body */
         .card-body {
-            padding: 30px;
+            padding: 0 30px 40px 30px;
+            min-height: 300px;
         }
         
         .menu-list {
@@ -94,12 +128,13 @@
         
         .menu-item {
             display: flex;
-            align-items: center; /* Center vertically for bullet consistency */
-            padding: 12px 0;
+            align-items: center;
+            padding: 14px 0;
             border-bottom: 1px solid var(--border-color);
             font-size: 18px;
             color: var(--text-color);
-            transition: padding 0.2s;
+            transition: padding 0.2s, color 0.2s;
+            cursor: pointer; /* Clickable */
         }
         
         .menu-item:last-child {
@@ -118,29 +153,94 @@
             margin-right: 15px;
             font-size: 20px;
         }
-
-        /* Loading / Empty States */
-        .state-container {
-            text-align: center;
-            padding: 40px;
+        
+        .info-hint {
+            margin-left: auto;
+            font-size: 12px;
             color: var(--text-secondary);
+            opacity: 0;
+            transition: opacity 0.2s;
         }
-        .state-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
-            display: block;
+        .menu-item:hover .info-hint {
+            opacity: 1;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(2px);
         }
         
-        /* Dark Mode adjustments */
-        .dark-mode .card-header {
-            background: linear-gradient(135deg, #D84315 0%, #BF360C 100%);
+        .modal-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 350px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .dark-mode .menu-item:hover {
-            color: #ffab91;
+        
+        .modal-overlay.active { display: flex; }
+        .modal-overlay.active .modal-card { transform: scale(1); }
+        
+        .modal-dish-name {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-color);
         }
-        .dark-mode .menu-item::before {
-            color: #ffab91;
+        
+        .allergy-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 25px;
         }
+        
+        .allergy-tag {
+            background-color: rgba(255, 112, 67, 0.1);
+            color: var(--food-accent);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .no-allergy {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .close-btn {
+            background-color: var(--food-accent);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(255, 112, 67, 0.3);
+        }
+
+        /* State Icons */
+        .state-container { text-align: center; padding: 60px 0; color: var(--text-secondary); }
+        .state-icon { font-size: 48px; display: block; margin-bottom: 10px; }
+        
+        /* Dark Mode */
+        .dark-mode .meal-tabs { background-color: rgba(255,255,255,0.05); }
+        .dark-mode .tab-btn.active { background-color: var(--card-bg); }
 
     </style>
 </head>
@@ -167,15 +267,28 @@
         </header>
 
         <div class="page-content">
-            <div class="menu-card" id="menuCard">
+            <div class="menu-card">
+                <!-- Meal Tabs -->
+                <div class="meal-tabs">
+                    <button class="tab-btn active" data-meal="breakfast">
+                        <span class="meal-icon">🌅</span> 아침
+                    </button>
+                    <button class="tab-btn" data-meal="lunch">
+                        <span class="meal-icon">☀️</span> 점심
+                    </button>
+                    <button class="tab-btn" data-meal="dinner">
+                        <span class="meal-icon">🌙</span> 저녁
+                    </button>
+                </div>
+                
                 <div class="card-header">
                     <div class="header-top">
                         <div>
-                            <h1 class="menu-title">오늘의 급식 🍱</h1>
-                            <div class="menu-subtitle" id="menuDate">날짜 불러오는 중...</div>
+                            <h1 class="menu-title" id="mealTitle">아침</h1>
+                            <div class="menu-subtitle" id="menuDate">날짜 로딩 중...</div>
                         </div>
-                        <div class="calorie-badge" id="calorieBadge">
-                            <span>🔥</span> <span id="calText">0 kcal</span>
+                        <div class="calorie-badge">
+                            <span>🔥</span> <span id="calText">0 Kcal</span>
                         </div>
                     </div>
                 </div>
@@ -183,69 +296,148 @@
                 <div class="card-body" id="menuContent">
                     <div class="state-container">
                         <span class="state-icon">👨‍🍳</span>
-                        <div>맛있는 급식 정보를 가져오고 있습니다...</div>
+                        <div>급식 정보를 가져오는 중입니다...</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
+    <!-- Dish Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-card">
+            <div class="modal-dish-name" id="modalTitle">음식 이름</div>
+            <div style="font-size:14px; color:var(--text-secondary); margin-bottom:10px;">알레르기 정보</div>
+            <div class="allergy-list" id="modalAllergies">
+                <!-- Tags injected here -->
+            </div>
+            <button class="close-btn" onclick="closeModal()">닫기</button>
+        </div>
+    </div>
+    
     <script src="../static/theme.js"></script>
     <script>
+        let allMeals = {};
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        function showDishDetails(name, allergies) {
+            document.getElementById('modalTitle').textContent = name;
+            const container = document.getElementById('modalAllergies');
+            container.innerHTML = '';
+            
+            if (allergies && allergies.length > 0) {
+                allergies.forEach(allergy => {
+                    container.innerHTML += `<div class="allergy-tag">${allergy}</div>`;
+                });
+            } else {
+                container.innerHTML = `<span class="no-allergy">알레르기 정보 없음</span>`;
+            }
+            
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function renderMeal(mealType) {
+            // Update Title
+            const titles = { 'breakfast': '아침', 'lunch': '점심', 'dinner': '저녁' };
+            document.getElementById('mealTitle').textContent = titles[mealType];
+            
+            const mealData = allMeals[mealType];
+            const content = document.getElementById('menuContent');
+            
+            if (!mealData || !mealData.menu || mealData.menu.length === 0) {
+                document.getElementById('calText').textContent = "0 Kcal";
+                content.innerHTML = `
+                    <div class="state-container">
+                        <span class="state-icon">🍽️</span>
+                        <div>해당 급식 정보가 없습니다.</div>
+                    </div>`;
+                return;
+            }
+            
+            // Update Calories
+            document.getElementById('calText').textContent = mealData.calories;
+            
+            let html = '<ul class="menu-list">';
+            mealData.menu.forEach((item, index) => {
+                // Encode basic data to pass to function or look up
+                // We'll attach click listener dynamically or via closure, simpler to re-attach
+                html += `
+                    <li class="menu-item" id="dish-${mealType}-${index}">
+                        <span class="menu-name">${item.name}</span>
+                        <span class="info-hint">정보 보기 ⓘ</span>
+                    </li>
+                `;
+            });
+            html += '</ul>';
+            content.innerHTML = html;
+            
+            // Attach Click Listeners for details
+            mealData.menu.forEach((item, index) => {
+                const el = document.getElementById(`dish-${mealType}-${index}`);
+                if(el) {
+                    el.addEventListener('click', () => showDishDetails(item.name, item.allergies));
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            fetch('/api/lunch')
+            // Tab Logic
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // Switch active tab
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    
+                    // Render meal
+                    const mealType = e.currentTarget.dataset.meal;
+                    renderMeal(mealType);
+                });
+            });
+            
+            // Fetch API
+            fetch('/api/meals')
                 .then(response => response.json())
                 .then(data => {
-                    const content = document.getElementById('menuContent');
+                    allMeals = data.meals;
                     
                     // Update Date
                     if(data.date) {
-                        // Format YYYYMMDD -> YYYY.MM.DD
                         const y = data.date.substring(0,4);
                         const m = data.date.substring(4,6);
                         const d = data.date.substring(6,8);
                         document.getElementById('menuDate').textContent = `${y}.${m}.${d}`;
-                    } else {
-                        document.getElementById('menuDate').textContent = new Date().toLocaleDateString();
                     }
+
+                    // Determine current meal based on time for initial load
+                    const hour = new Date().getHours();
+                    let currentMeal = 'breakfast';
+                    if (hour >= 8 && hour < 14) currentMeal = 'lunch';
+                    else if (hour >= 14) currentMeal = 'dinner';
                     
-                    // Update Calories
-                    if(data.calories) {
-                        document.getElementById('calText').textContent = data.calories;
-                    }
-
-                    // Build List
-                    if (!data.menu || data.menu.length === 0) {
-                        content.innerHTML = `
-                            <div class="state-container">
-                                <span class="state-icon">🍽️</span>
-                                <div>오늘은 급식 정보가 없습니다.</div>
-                            </div>`;
-                        return;
-                    }
-
-                    let html = '<ul class="menu-list">';
-                    data.menu.forEach(item => {
-                        html += `
-                            <li class="menu-item">
-                                <span class="menu-name">${item.name}</span>
-                            </li>
-                        `;
+                    // Activate correct tab button
+                    document.querySelectorAll('.tab-btn').forEach(b => {
+                        b.classList.remove('active');
+                        if(b.dataset.meal === currentMeal) b.classList.add('active');
                     });
-                    html += '</ul>';
-
-                    content.innerHTML = html;
+                    
+                    renderMeal(currentMeal);
                 })
                 .catch(err => {
-                    const content = document.getElementById('menuContent');
-                    content.innerHTML = `
+                    console.error(err);
+                    document.getElementById('menuContent').innerHTML = `
                         <div class="state-container">
                             <span class="state-icon">⚠️</span>
                             <div>정보를 불러오지 못했습니다.</div>
                         </div>`;
-                    console.error(err);
                 });
+                
+            // Modal close on background click
+            document.getElementById('detailModal').addEventListener('click', (e) => {
+                if(e.target === document.getElementById('detailModal')) closeModal();
+            });
         });
     </script>
-</body>
 </html>

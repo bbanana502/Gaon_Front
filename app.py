@@ -148,55 +148,77 @@ def get_timetable():
             
     return jsonify(final_timetable)
 
-@app.route('/api/lunch')
-def get_lunch():
+# Standard NEIS Allergy Codes
+ALLERGY_MAP = {
+    "1": "난류", "2": "우유", "3": "메밀", "4": "땅콩", "5": "대두",
+    "6": "밀", "7": "고등어", "8": "게", "9": "새우", "10": "돼지고기",
+    "11": "복숭아", "12": "토마토", "13": "아황산류", "14": "호두", "15": "닭고기",
+    "16": "쇠고기", "17": "오징어", "18": "조개류", "19": "잣"
+}
+
+def parse_dish(dish_string):
+    """
+    Parses a dish string like "Rice(1.2)" into name and list of allergies.
+    """
+    # Extract allergy numbers: (1.2.3)
+    match = re.search(r'\(([\d\.]+)\)', dish_string)
+    allergies = []
+    clean_name = dish_string
+    
+    if match:
+        codes = match.group(1).split('.')
+        for code in codes:
+            if code in ALLERGY_MAP:
+                allergies.append(ALLERGY_MAP[code])
+        # Remove the code part from name for display
+        clean_name = re.sub(r'\([0-9\.]+\)', '', dish_string).replace('*', '')
+        
+    return {
+        "name": clean_name.strip(),
+        "allergies": allergies
+    }
+
+@app.route('/api/meals')
+def get_meals():
     today = datetime.datetime.now().strftime('%Y%m%d')
-    # Use mealServiceDietInfo
     url = f"{BASE_URL}mealServiceDietInfo?{NEIS_API_KEY}&MLSV_YMD={today}"
+    
+    meals = {
+        "breakfast": {"menu": [], "calories": "0 Kcal"},
+        "lunch": {"menu": [], "calories": "0 Kcal"},
+        "dinner": {"menu": [], "calories": "0 Kcal"}
+    }
     
     try:
         response = requests.get(url)
         data = response.json()
         
-        if 'mealServiceDietInfo' not in data:
-            return jsonify({"date": today, "menu": [], "calories": 0}) 
+        if 'mealServiceDietInfo' in data:
+            rows = data['mealServiceDietInfo'][1]['row']
             
-        # Usually lunch is MMEAL_SC_CODE=2. But rows might return Breakfast/Lunch/Dinner.
-        # We'll filter for Lunch (2) or just take the first one if unsure. 
-        # BSM is a boarding school so might have all 3. We want Lunch.
-        
-        meal_rows = data['mealServiceDietInfo'][1]['row']
-        lunch_row = next((r for r in meal_rows if r['MMEAL_SC_CODE'] == '2'), None)
-        
-        # If no explicit lunch, fallback to first standard meal
-        if not lunch_row and meal_rows:
-            lunch_row = meal_rows[0]
-            
-        if not lunch_row:
-             return jsonify({"date": today, "menu": [], "calories": 0})
-             
-        dish_str = lunch_row['DDISH_NM'] # HTML formatted string with <br/>
-        clean_dishes = [clean_dish_name(d.strip()) for d in dish_str.split('<br/>') if d.strip()]
-        
-        cal_info = lunch_row.get('CAL_INFO', '0 kcal')
-        
-        # Structure for frontend
-        formatted_menu = []
-        for dish in clean_dishes:
-            formatted_menu.append({
-                "category": "Menu", # NEIS doesn't categorize by "Soup/Rice", just a list
-                "name": dish
-            })
-            
+            for row in rows:
+                # MMEAL_SC_CODE: 1=Breakfast, 2=Lunch, 3=Dinner
+                code = row['MMEAL_SC_CODE']
+                meal_type = ""
+                if code == "1": meal_type = "breakfast"
+                elif code == "2": meal_type = "lunch"
+                elif code == "3": meal_type = "dinner"
+                
+                if meal_type:
+                    dish_str = row['DDISH_NM']
+                    # Split by <br/> -> parse each dish
+                    parsed_menu = [parse_dish(d.strip()) for d in dish_str.split('<br/>') if d.strip()]
+                    meals[meal_type]["menu"] = parsed_menu
+                    meals[meal_type]["calories"] = row.get('CAL_INFO', '0 Kcal')
+
         return jsonify({
             "date": today,
-            "menu": formatted_menu,
-            "calories": cal_info
+            "meals": meals
         })
 
     except Exception as e:
-        print(f"Error fetching lunch: {e}")
-        return jsonify({"date": today, "menu": [], "calories": 0})
+        print(f"Error fetching meals: {e}")
+        return jsonify({"date": today, "meals": meals})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
