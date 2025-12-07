@@ -93,6 +93,33 @@
         .dark-mode .special-row {
             background-color: #3b3b2e;
         }
+        
+        /* Event Type Styling */
+        .type-break {
+            background-color: #f5f5f5;
+            color: #888;
+            font-size: 13px;
+            height: 40px; /* Slimmer for breaks */
+        }
+        .dark-mode .type-break {
+            background-color: #2a2a2a;
+            color: #666;
+        }
+        .type-food {
+            background-color: #e8f5e9; /* Light Green */
+        }
+        .dark-mode .type-food {
+            background-color: #1e3a23;
+        }
+        .type-life {
+            background-color: #e3f2fd; /* Light Blue */
+        }
+        .dark-mode .type-life {
+            background-color: #1a2a3a;
+        }
+        
+        .type-break .subject { font-weight: 400; font-style: italic; }
+        .type-break .period-badge { display: none; }
     </style>
 </head>
 <body>
@@ -137,10 +164,10 @@
             
             <div class="timetable-container" id="timetableContainer">
                 <div class="table-header">
-                    <div>Period</div>
+                    <div>Time Event</div> <!-- Changed Header -->
                     <div>Time</div>
-                    <div>Subject</div>
-                    <div>Teacher</div>
+                    <div>Activity</div>
+                    <div></div>
                 </div>
                 <div id="timetableRows">
                     <div class="loading">Loading schedule...</div>
@@ -166,23 +193,25 @@
                     .then(response => response.json())
                     .then(data => {
                         let html = '';
-                        // Sorting logic might need adjustment if mixed integers and strings (Dinner)
-                        // data.sort(...) - 'Dinner' vs int period
                         
-                        // Actually, the API returns them in meaningful order (1-7, then appended 8-11).
-                        // If we trust the API order, we don't need client sort.
+                        // Data assumes already sorted by timeline in backend
                         
-                        data.forEach(cls => {
-                            const isCurrent = cls.is_current ? 'current-time' : '';
-                            const isSpecial = cls.is_special ? 'special-row' : '';
-                            const periodDisplay = cls.period === 'Dinner' ? 'Dinner' : cls.period;
+                        data.forEach(item => {
+                            const isCurrent = item.is_current ? 'current-time' : '';
+                            const typeClass = item.type ? `type-${item.type}` : '';
+                            
+                            // Display logic
+                            let periodBadge = '';
+                            if(item.period) {
+                                periodBadge = `<span class="period-badge">${item.period}</span>`;
+                            }
                             
                             html += `
-                                <div class="table-row ${isCurrent} ${isSpecial}">
-                                    <div><span class="period-badge" style="${cls.period==='Dinner' ? 'background:#e67e22':''}">${periodDisplay}</span></div>
-                                    <div style="font-size: 14px; color: var(--text-secondary);">${cls.time}</div>
-                                    <div class="subject">${cls.subject}</div>
-                                    <div class="teacher">${cls.teacher}</div>
+                                <div class="table-row ${isCurrent} ${typeClass}">
+                                    <div>${periodBadge}</div>
+                                    <div style="font-size: 14px; color: var(--text-secondary);">${item.time}</div>
+                                    <div class="subject">${item.subject}</div>
+                                    <div class="teacher">${item.teacher}</div>
                                 </div>
                             `;
                         });
