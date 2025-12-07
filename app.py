@@ -118,26 +118,32 @@ def get_timetable():
     schedule_def = DAILY_SCHEDULE
 
     for item in schedule_def:
-        subject = item['event']
+        subject = item.get('name', '')
         teacher = "-"
         
         # Override Subject if it's a class and we have NEIS data
         if item.get('type') == 'class':
             period_num = item.get('period')
+            # Override name with "Period X" placeholder if no specific name provided in struct, 
+            # though global struct has no "name" for classes usually, let's allow fallback.
             if period_num in neis_data:
                 subject = neis_data[period_num]
+            elif not subject: # If subject is empty strings (for classes in global dict?)
+                 subject = f"{period_num}교시"
         
-        times = item['time'].split(' - ')
-        start, end = times[0], times[1]
+        # Construct time string from start/end
+        start = item['start']
+        end = item['end']
+        time_str = f"{start} - {end}"
         
         final_timetable.append({
             "period": item.get('period', '-') if item.get('type') == 'class' else "", 
-            "time": item['time'],
+            "time": time_str,
             "subject": subject,
             "teacher": teacher,
             "is_current": is_time_in_range(start, end),
-            "is_special": item.get('type') in ['food', 'life'], # Style these differently
-            "type": item.get('type') # Pass type for frontend custom styling if needed
+            "is_special": item.get('type') in ['food', 'life'], 
+            "type": item.get('type') 
         })
             
     return jsonify(final_timetable)
