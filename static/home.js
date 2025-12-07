@@ -43,7 +43,52 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     render();
+    loadWidgets();
 });
+
+function loadWidgets() {
+    // Mock Data for Lunch
+    const lunchMenu = [
+        "Main: Spicy Pork Bulgogi",
+        "Soup: Soybean Paste Soup",
+        "Side: Kimchi, Seasoned Spinach",
+        "Dessert: Fruit Salad"
+    ];
+    
+    // Mock Data for Timetable (e.g., today's classes)
+    const timeTable = [
+        { period: 1, subject: "Mathematics" },
+        { period: 2, subject: "English" },
+        { period: 3, subject: "History" },
+        { period: 4, subject: "Science" },
+        { period: 5, subject: "Physical Ed" }
+    ];
+
+    // Inject Lunch
+    const lunchContainer = document.querySelector('.lunch-widget .widget-content');
+    if (lunchContainer) {
+        let html = '<ul style="list-style: none; padding: 0;">';
+        lunchMenu.forEach(item => {
+            html += `<li style="margin-bottom: 5px; padding-left: 10px; border-left: 2px solid #3498db;">${item}</li>`;
+        });
+        html += '</ul>';
+        lunchContainer.innerHTML = html;
+    }
+
+    // Inject Timetable
+    const timeContainer = document.querySelector('.timetable-widget .widget-content');
+    if (timeContainer) {
+        let html = '<ul style="list-style: none; padding: 0;">';
+        timeTable.forEach(cls => {
+            html += `<li style="margin-bottom: 8px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 4px;">
+                <span style="font-weight: 500; color: #333;">${cls.period}교시</span>
+                <span>${cls.subject}</span>
+            </li>`;
+        });
+        html += '</ul>';
+        timeContainer.innerHTML = html;
+    }
+}
 
 function switchView(view) {
     currentView = view;

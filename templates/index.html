@@ -3,68 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Gaon - Your School Partner</title>
     <link rel="stylesheet" href="../static/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div>
-        <img src="../static/back.jpg" alt="Back" class="Back">
-    </div>
-    <div class="Header">
-        <div class="Hl_group">
-            <div class="Hl">
-                <img src="../static/logo.svg" alt="logo" class="Logo">
-                <div class="dropdown_menu">
-                    <button class="Hl_content">Main</button>
-                    <div class="sub_main">
-                        <a href="#">기능 1</a>
-                        <a href="#">기능 2</a>
-                        <a href="#">기능 1</a>
-                        <a href="#">기능 2</a>
-                        <a href="#">기능 1</a>
-                        <a href="#">기능 2</a>
-                        <a href="#">기능 1</a>
-                        <a href="#">기능 2</a>
-                    </div>
-                </div>
-                <div class="dropdown_plans">
-                    <button class="Hl_content">Plans</button>
-                    <div class="sub_plans">
-                        <a href="#">기능 1</a>
-                        <a href="#">기능 2</a>
-                        <a href="#">기능 1</a>
-                        <a href="#">기능 2</a>
-                        <a href="#">기능 1</a>
-                        <a href="#">기능 2</a>
-                        <a href="#">기능 1</a>
-                        <a href="#">기능 2</a>
-                    </div>
-                </div>
-            </div>
+    <header class="header">
+        <a href="/" class="logo">
+            <img src="../static/logo.svg" alt="Gaon">
+        </a>
+        <div class="nav-links">
+            <a href="/login" class="nav-btn login-btn">Log in</a>
+            <a href="/signup" class="nav-btn signup-btn">Sign up</a>
         </div>
-        <div class="Hr">
-            <a href="/signup">
-                <button class="Hr_content" style="background-color: #b069ae; color: #000000;" onclick="">
-                    Sign up
-                </button>
-            </a>
-            <a href="/login">
-                <button class="Hr_content" style="background-color: rgba(255, 255, 255, 0.2); color: #ffffff;" >
-                    Login
-                </button>
-            </a>
-        </div>
-    </div>
-    <div class="middle_bar">
-        <div class="middle_con">
-            Your school partner
-        </div>
-    </div>
-    <div class="Footer_bar">
-        <div class="Footer_con">
-            How we change<br>
-            the world<br>
-        </div>
-    </div>  
+    </header>
+
+    <main class="hero">
+        <h1>Your school partner</h1>
+        <p>Manage your schedule, chat with AI, and organize your school life in one place.</p>
+        <a href="/signup" class="cta-btn">Get Started</a>
+    </main>
+
+    <footer class="footer">
+        &copy; 2025 Gaon. All rights reserved.
+    </footer>
 </body>
 </html>

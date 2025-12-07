@@ -16,13 +16,12 @@
                 <a href="/home" class="logo">
                     <img src="../static/logo.svg" alt="Gaon" style="height: 40px;">
                 </a>
-                <div class="dropdown">
-                  <button class="main-btn">Main ▾</button>
-                  <div class="dropdown-content">
-                    <a href="/chat">Chatting</a>
-                    <a href="/profile">Settings</a>
-                  </div>
-                </div>
+                <nav class="main-nav">
+                    <a href="/chat" class="nav-item">Chatting</a>
+                    <a href="/timetable" class="nav-item">Timetable</a>
+                    <a href="/menu" class="nav-item">Menu</a>
+                    <a href="/profile" class="nav-item">Setting</a>
+                </nav>
             </div>
             <div class="user-area">
                 <a href="/profile">
@@ -31,37 +30,49 @@
             </div>
         </header>
         
-        <!-- Controls -->
-        <div class="controls">
-            <div class="nav-date">
-                <div class="btn-group">
-                <button class="icon-btn" id="themeToggleBtn">
-                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                </button>
-                <button class="icon-btn" id="prevWeekBtn">&lt;</button>
-                    <button class="text-btn" id="todayBtn">Today</button>
-                    <button class="icon-btn" id="nextWeekBtn">&gt;</button>
+        <div class="dashboard-content">
+            <!-- Left: Calendar Section (Now Full Width) -->
+            <div class="calendar-section" style="flex: 1; padding-right: 0;">
+                <!-- Controls -->
+                <div class="controls">
+                    <div class="nav-date">
+                        <div class="btn-group">
+                        <button class="icon-btn" id="themeToggleBtn">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                        </button>
+                        <button class="icon-btn" id="prevWeekBtn">&lt;</button>
+                            <button class="text-btn" id="todayBtn">Today</button>
+                            <button class="icon-btn" id="nextWeekBtn">&gt;</button>
+                        </div>
+                    </div>
+                    
+                    <div class="view-switch">
+                        <button id="dayViewBtn">Day</button>
+                        <button class="active" id="weekViewBtn">Week</button>
+                        <button id="monthViewBtn">Month</button>
+                        <button id="yearViewBtn">Year</button>
+                    </div>
+
+                    <div class="search-area">
+                        <input type="text" placeholder="Search">
+                    </div>
+                </div>
+
+                <div class="timezone-info">
+                    <div class="day-headers" id="dayHeaders">
+                        <div class="time-col-header"></div> <!-- Spacer for time column -->
+                        <!-- JS will inject day columns here -->
+                    </div>
+                </div>
+
+                <!-- Calendar Grid -->
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- JS injects rows here -->
                 </div>
             </div>
-            
-            <div class="view-switch">
-                <button id="dayViewBtn">Day</button>
-                <button class="active" id="weekViewBtn">Week</button>
-                <button id="monthViewBtn">Month</button>
-                <button id="yearViewBtn">Year</button>
-            </div>
-
-            <div class="search-area">
-                <input type="text" placeholder="Search">
-            </div>
+            <!-- Widgets Section Removed -->
         </div>
-
-        <div class="timezone-info">
-            <div class="day-headers" id="dayHeaders">
-                <div class="time-col-header"></div> <!-- Spacer for time column -->
-                <!-- JS will inject day columns here -->
-            </div>
-        </div>
+    </div>
 
         <!-- Calendar Grid -->
         <div class="calendar-grid" id="calendarGrid">

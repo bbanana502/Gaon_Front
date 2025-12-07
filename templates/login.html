@@ -3,35 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Gaon - Login</title>
     <link rel="stylesheet" href="../static/login.css">
-</head>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div>
-        <img src="../static/back.jpg" alt="Back" class="Back">
-    </div>
-    <div class="Login_bar">
-        <div class="Login_con">
-            <p class="title">Log in to your account!</p>
-            <p class="little_title">please enter your email address.<br>if you've purchased TEMU's products before,<br>use the registered email address</p>
-        </div>
-        <div class="input_bar">
-            <p>Student Number</p>
-            <input type="text" placeholder="Enter Your Student Number">
-            <p>Password</p>
-            <input type="password" placeholder="Enter Your Password">
-        </div>
-        <div class="Footer">
-            <div class="check">
-                <input type="checkbox" id="Remember">
-                <label for="Remember">
-                    Remember Me
-                </label>
+    <div class="auth-container">
+        <a href="/" class="logo-area">
+            <img src="../static/logo.svg" alt="Gaon">
+        </a>
+        
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Welcome back</h2>
+                <p>Please enter your details to sign in.</p>
             </div>
-            <a href="/newPassword" class="newPass">Forgot Password?</a>
+            
+            <form action="/home"> <!-- Linking to home for demo -->
+                <div class="form-group">
+                    <label>Student Number</label>
+                    <input type="text" placeholder="Enter your student number" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="Enter your password" required>
+                </div>
+                
+                <div class="form-footer">
+                    <label class="checkbox-wrap">
+                        <input type="checkbox"> Remember me
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="submit-btn" onclick="location.href='/home'; return false;">Sign in</button>
+            </form>
+            
+            <div class="bottom-link">
+                Don't have an account? <a href="/signup">Sign up</a>
+            </div>
         </div>
-        <button class="result">Log in</button>
     </div>
 </body>
 </html>
