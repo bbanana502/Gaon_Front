@@ -17,141 +17,129 @@
             font-size: 24px;
             font-weight: 700;
         }
+        /* Modern Vertical Timetable Layout */
         .timetable-container {
-            background-color: var(--container-bg);
-            border-radius: 12px;
-            background-color: transparent; /* No card wrapper for container itself */
-            box-shadow: none;
-            padding: 0;
-            border: none;
-        }
-
-        .horizontal-scroll {
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            padding: 10px 5px 30px 5px; /* Bottom padding for scrollbar space or shadow */
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none; /* Hide scrollbar Firefox */
-        }
-        
-        .horizontal-scroll::-webkit-scrollbar {
-            display: none; /* Hide scrollbar Chrome/Safari */
-        }
-
-        .time-card {
-            flex: 0 0 200px; /* Fixed width cards */
-            background-color: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            scroll-snap-align: center;
-            border: 1px solid var(--border-color);
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
-            min-height: 140px;
-        }
-        
-        .dark-mode .time-card {
             background-color: var(--card-bg);
-            border-color: var(--border-color);
-        }
-
-        .time-card.current-time {
-            border: 2px solid var(--accent-color);
-            background-color: rgba(52, 152, 219, 0.05);
-            transform: scale(1.05);
-            box-shadow: 0 8px 15px rgba(52, 152, 219, 0.2);
-            z-index: 10;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            padding: 20px;
+            overflow: hidden; /* Contain children */
         }
         
-        .time-card.current-time::before {
-            content: "NOW";
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--accent-color);
-            color: white;
-            font-size: 11px;
-            font-weight: bold;
-            padding: 4px 10px;
-            border-radius: 20px;
-        }
-
-        .card-header {
-            margin-bottom: 15px;
+        .timetable-list {
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            gap: 5px;
+            gap: 0; /* separators handled by border */
         }
 
-        .time-range {
-            font-size: 13px;
-            color: var(--text-secondary);
-            font-family: monospace;
+        .timetable-row {
+            display: grid;
+            grid-template-columns: 80px 140px 1fr;
+            padding: 16px 10px;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+            transition: background-color 0.2s;
         }
         
+        .timetable-row:last-child {
+            border-bottom: none;
+        }
+        
+        .timetable-row:hover {
+            background-color: var(--hover-bg);
+        }
+
+        /* Columns */
+        .col-badge {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .col-time {
+            font-family: 'Outfit', sans-serif; /* Monospace-ish look via font choice or just clean sans */
+            font-size: 14px;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+        
+        .col-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        /* Elements */
         .period-badge {
-            display: inline-block;
             background-color: var(--accent-color);
             color: white;
             font-size: 12px;
-            padding: 2px 8px;
-            border-radius: 4px;
             font-weight: 700;
-        }
-
-        .card-body .subject {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 5px;
-            word-break: keep-all; /* Korean word break */
+            padding: 6px 14px;
+            border-radius: 20px; /* Pill shape */
+            min-width: 60px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        .card-body .teacher {
+        .subject {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .teacher {
             font-size: 13px;
             color: var(--text-secondary);
         }
 
-        /* Event Type Styling Overrides */
-        .time-card.type-break {
-            background-color: #f8f9fa;
-            flex: 0 0 120px; /* Smaller cards for breaks */
-            min-height: 100px;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+        /* Active State */
+        .result-row.current-time { /* 'result-row' just for specificity if needed, using .timetable-row.current-time */
+            background-color: rgba(52, 152, 219, 0.08);
+            position: relative;
+            border-radius: 8px; /* Slight roundness for active item */
+            border-bottom: none; /* Remove separator for cleaner look */
+            margin: 4px 0; /* Popped out slightly */
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.15);
         }
-        .dark-mode .time-card.type-break {
-            background-color: #2a2a2a;
+        
+        .timetable-row.current-time::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 10%;
+            bottom: 10%;
+            width: 4px;
+            background-color: var(--accent-color);
+            border-radius: 0 4px 4px 0;
         }
-        .time-card.type-break .subject {
-            font-size: 14px;
+
+        /* Special Rows (Dinner, etc) custom Badges */
+        .type-food .period-badge { background-color: #66bb6a; } /* Green */
+        .type-life .period-badge { background-color: #78909c; } /* Grey-Blue */
+        .type-study .period-badge { background-color: #5c6bc0; } /* Indigo */
+        
+        /* Break Styling - Slimmer */
+        .timetable-row.type-break {
+            padding: 8px 10px;
+            background-color: rgba(0,0,0,0.02);
+            border-bottom: 1px dashed var(--border-color); /* Dashed separator */
+        }
+        .dark-mode .timetable-row.type-break {
+            background-color: rgba(255,255,255,0.02);
+        }
+        .type-break .subject {
+            font-size: 13px;
             font-style: italic;
-            color: #888;
+            color: var(--text-secondary);
+            font-weight: 400;
         }
-        .time-card.type-break .card-header,
-        .time-card.type-break .teacher {
-            display: none;
+        .type-break .col-badge { opacity: 0.3; } /* Dim icon/badge area */
+        .type-break .period-badge { display: none; } /* Hide heavy badge */
+        .type-break .col-badge::after {
+            content: "☕";
+            font-size: 14px;
         }
-        
-        .time-card.type-food {
-            border-top: 4px solid #4caf50;
-        }
-         .time-card.type-life {
-            border-top: 4px solid #2196f3;
-        }
-        
-        .special-row {
-            /* Legacy class clean up if needed, cards handle it via type */
-        }
+
     </style>
 </head>
 <body>
@@ -195,8 +183,13 @@
             </div>
             
             <div class="timetable-container" id="timetableContainer">
-                <!-- Header removed as cards are self-contained -->
-                <div id="timetableRows" class="horizontal-scroll">
+                <!-- Headers are less needed in list view, or we can add a subtle one. Let's keep it clean list. -->
+                 <div class="table-header" style="display:grid; grid-template-columns: 80px 140px 1fr; padding: 0 10px 10px 10px; border-bottom: 2px solid var(--border-color); color: var(--text-secondary); font-weight:600; font-size:13px; margin-bottom: 5px;">
+                    <div style="text-align:center">구분</div>
+                    <div>시간</div>
+                    <div>활동</div>
+                </div>
+                <div id="timetableRows" class="timetable-list">
                     <div class="loading">시간표 로딩 중...</div>
                 </div>
             </div>
@@ -228,20 +221,36 @@
                             // Display logic
                             let periodBadge = '';
                             if(item.period) {
+                                let badgeText = item.period;
                                 if (typeof item.period === 'number') {
-                                    periodBadge = `<span class="period-badge">${item.period}교시</span>`;
-                                } else {
-                                    periodBadge = `<span class="period-badge">${item.period}</span>`;
+                                    badgeText = `${item.period}교시`;
+                                }
+                                periodBadge = `<span class="period-badge">${badgeText}</span>`;
+                            } else {
+                                // For items without explicit period but have type, map to badge text?
+                                // Actually API returns empty period for Life/Food usually.
+                                // We can infer badge from Name for food/life?
+                                // "Dinner" -> "저녁", "Lunch" -> "점심"
+                                if(item.type === 'food') {
+                                     const name = item.time.includes('07:30') ? "아침" : (item.time.includes('12:30') ? "점심" : "저녁");
+                                     periodBadge = `<span class="period-badge">${name}</span>`;
+                                } else if(item.type === 'life') {
+                                    // Use first word of subject? Or just specific icon?
+                                    // Let's use "일정" (Schedule) or explicit map
+                                    periodBadge = `<span class="period-badge" style="background:#b0bec5">일정</span>`;
                                 }
                             }
                             
+                            // Specific Overrides for cleaner look
+                            if(item.subject === "기상") periodBadge = `<span class="period-badge" style="background:#ffb74d">기상</span>`;
+                            if(item.subject === "등교") periodBadge = `<span class="period-badge" style="background:#ffb74d">등교</span>`;
+                            if(item.subject.includes("청소")) periodBadge = `<span class="period-badge" style="background:#4db6ac">청소</span>`;
+                            
                             html += `
-                                <div class="time-card ${isCurrent} ${typeClass}">
-                                    <div class="card-header">
-                                        ${periodBadge}
-                                        <div class="time-range">${item.time}</div>
-                                    </div>
-                                    <div class="card-body">
+                                <div class="timetable-row ${isCurrent} ${typeClass}">
+                                    <div class="col-badge">${periodBadge}</div>
+                                    <div class="col-time">${item.time}</div>
+                                    <div class="col-content">
                                         <div class="subject">${item.subject}</div>
                                         <div class="teacher">${item.teacher}</div>
                                     </div>
@@ -251,11 +260,11 @@
 
                         container.innerHTML = html;
                         
-                        // Scroll to current time if exists (Horizontal)
-                        const currentEl = document.querySelector('.current-time');
+                        // Scroll to current time if exists
+                        const currentEl = document.querySelector('.timetable-row.current-time');
                         if (currentEl) {
                             setTimeout(() => {
-                                currentEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                                currentEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             }, 500);
                         }
                     })
