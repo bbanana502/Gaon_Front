@@ -430,3 +430,22 @@ function isSameDate(d1, d2) {
            d1.getMonth() === d2.getMonth() && 
            d1.getFullYear() === d2.getFullYear();
 }
+
+// Append fetch logic to home.js
+document.addEventListener('DOMContentLoaded', () => {
+    // Fetch Meals (Request only, expect 404)
+    fetch('/api/meals')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('homeMealContent').innerText = JSON.stringify(data);
+        })
+        .catch(err => {
+            console.log('Meals request sent, currently no response expected.');
+            document.getElementById('homeMealContent').innerText = '정보를 불러올 수 없습니다 (백엔드 미연동)';
+        });
+
+    // Fetch Timetable (Request only)
+    fetch('/api/timetable')
+        .catch(err => console.log('Timetable request sent.'));
+});
+

@@ -17,9 +17,7 @@
                     <img src="../static/logo.svg" alt="Gaon" style="height: 40px;">
                 </a>
                 <nav class="main-nav">
-                    <a href="/chat" class="nav-item chat-nav">채팅</a>
                     <a href="/timetable" class="nav-item timetable-nav">시간표</a>
-                    <a href="/menu" class="nav-item menu-nav">급식</a>
                     <a href="/profile" class="nav-item profile-nav">설정</a>
                 </nav>
             </div>
@@ -32,7 +30,7 @@
         
         <div class="dashboard-content">
             <!-- Left: Calendar Section (Now Full Width) -->
-            <div class="calendar-section" style="flex: 1; padding-right: 0;">
+            <div class="calendar-section" style="flex: 2; padding-right: 0;">
                 <!-- Controls -->
                 <div class="controls">
                     <div class="nav-date">
@@ -70,7 +68,14 @@
                     <!-- JS injects rows here -->
                 </div>
             </div>
-            <!-- Widgets Section Removed -->
+            
+            <!-- Right: Meal Widget -->
+            <div class="widgets-section" style="flex: 1; margin-left: 20px;">
+                <div class="widget-card" style="background: var(--card-bg); padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--border-color);">
+                    <h3 style="margin: 0 0 20px 0; font-size: 18px;">오늘의 급식 🍱</h3>
+                    <div id="homeMealContent" style="color: var(--text-secondary);">로딩 중...</div>
+                </div>
+            </div>
         </div>
     </div>
 
