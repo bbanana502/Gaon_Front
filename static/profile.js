@@ -35,14 +35,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Nickname Initialization ---
+    const nicknameDisplay = document.querySelector('.user-info-display h2');
+    const nicknameInput = document.getElementById('nicknameInput');
+    
+    // Load from API
+    fetch('/user/me')
+        .then(res => res.json())
+        .then(data => {
+            const storedId = localStorage.getItem('student_id');
+            // Prefer API nickname, fallback to stored ID, then default
+            const displayName = data.nickname || storedId || 'Student';
+            
+            nicknameDisplay.textContent = displayName;
+            nicknameInput.value = displayName;
+        })
+        .catch(err => console.error(err));
+
+    // --- Edit Logic ---
     editBtn.addEventListener('click', () => {
         isEditing = !isEditing;
 
         if (isEditing) {
             // Enable inputs
             inputs.forEach(input => input.disabled = false);
-            editBtn.textContent = 'Save';
-            editBtn.style.backgroundColor = '#2ecc71'; // Green for save
+            editBtn.textContent = '저장'; // Changed to Korean "Save"
+            editBtn.style.backgroundColor = '#2ecc71'; // Green
             
             // Visual cue for avatar
             profileAvatar.style.cursor = 'pointer';
@@ -50,15 +68,30 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // Disable inputs (Save action)
             inputs.forEach(input => input.disabled = true);
-            editBtn.textContent = 'Edit';
-            editBtn.style.backgroundColor = ''; // Revert to original color (CSS)
+            editBtn.textContent = '수정'; // Changed to Korean "Edit"
+            editBtn.style.backgroundColor = ''; 
             
+            // Save logic to API
+            const newNickname = nicknameInput.value.trim();
+            
+            fetch('/user/config', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nickname: newNickname })
+            })
+            .then(res => res.json())
+            .then(data => {
+                nicknameDisplay.textContent = data.nickname;
+                alert('프로필이 저장되었습니다!'); 
+            })
+            .catch(err => {
+                alert('저장 실패!');
+                console.error(err);
+            });
+
             // Remove visual cue
             profileAvatar.style.cursor = 'default';
             profileAvatar.style.border = '1px solid #ddd';
-
-            // Mock Save Alert
-            alert('Profile updated successfully!');
         }
     });
 

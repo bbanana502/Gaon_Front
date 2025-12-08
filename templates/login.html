@@ -22,7 +22,7 @@
             <form action="/home"> <!-- Linking to home for demo -->
                 <div class="form-group">
                     <label>학번</label>
-                    <input type="text" placeholder="학번을 입력하세요 (예: 1101)" required>
+                    <input type="text" id="studentIdInput" placeholder="학번을 입력하세요 (예: 1101)" required>
                 </div>
                 <div class="form-group">
                     <label>비밀번호</label>
@@ -36,7 +36,7 @@
                     <a href="#" class="forgot-link">비밀번호 찾기</a>
                 </div>
                 
-                <button type="submit" class="submit-btn" onclick="localStorage.setItem('isLoggedIn', 'true'); location.href='/home'; return false;">로그인</button>
+                <button type="submit" class="submit-btn" onclick="const sid = document.getElementById('studentIdInput').value; localStorage.setItem('student_id', sid); localStorage.setItem('isLoggedIn', 'true'); location.href='/home'; return false;">로그인</button>
             </form>
             
             <div class="bottom-link">
