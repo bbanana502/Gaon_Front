@@ -45,10 +45,12 @@
                         </div>
                     </div>
                     
+                    <h2 id="currentMonthDisplay" style="margin-left: 20px; margin-right: auto; font-size: 1.5rem; color: var(--text-color);">Loading...</h2>
+
                     <div class="view-switch">
                         <button id="dayViewBtn">Day</button>
-                        <button class="active" id="weekViewBtn">Week</button>
-                        <button id="monthViewBtn">Month</button>
+                        <button id="weekViewBtn">Week</button>
+                        <button id="monthViewBtn" class="active">Month</button>
                         <button id="yearViewBtn">Year</button>
                     </div>
 
@@ -73,102 +75,7 @@
         </div>
     </div>
 
-        <!-- Calendar Grid -->
-        <div class="calendar-grid" id="calendarGrid">
-            <!-- JS could inject rows here, but for now we keep static rows and just update headers logic -->
-            <!-- Time Rows (7 AM to 3 PM for demo) -->
-            <div class="time-row">
-                <div class="time-label">7 AM</div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-            </div>
-            <div class="time-row">
-                <div class="time-label">8 AM</div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-            </div>
-            <div class="time-row">
-                <div class="time-label">9 AM</div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-            </div>
-            <div class="time-row">
-                <div class="time-label">10 AM</div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-            </div>
-            <div class="time-row">
-                <div class="time-label">11 AM</div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-            </div>
-            <div class="time-row">
-                <div class="time-label">12 PM</div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-            </div>
-            <div class="time-row">
-                <div class="time-label">1 PM</div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-            </div>
-            <div class="time-row">
-                <div class="time-label">2 PM</div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-            </div>
-             <div class="time-row">
-                <div class="time-label">3 PM</div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-                <div class="day-cell"></div>
-            </div>
-        </div>
-    </div>
+    <!-- Duplicate Calendar Grid Removed -->
     <!-- Floating Add Button -->
     <button class="add-event-btn" id="addEventBtn">+</button>
 

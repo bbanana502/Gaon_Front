@@ -1,8 +1,9 @@
 // home.js
 
 let currentDate = new Date();
-let currentView = 'week'; // 'day', 'week', 'month', 'year'
+let currentView = 'month'; // Default to Month
 let events = JSON.parse(localStorage.getItem('gaonEvents')) || [];
+let schoolEvents = []; // From API
 
 document.addEventListener('DOMContentLoaded', () => {
     // Navigation Buttons
@@ -23,80 +24,76 @@ document.addEventListener('DOMContentLoaded', () => {
     const eventForm = document.getElementById('eventForm');
     const addEventBtn = document.getElementById('addEventBtn');
 
-    closeBtn.onclick = () => closeModal();
-    cancelBtn.onclick = () => closeModal();
+    if(closeBtn) closeBtn.onclick = () => closeModal();
+    if(cancelBtn) cancelBtn.onclick = () => closeModal();
     window.onclick = (event) => {
         if (event.target == modal) closeModal();
     };
 
-    addEventBtn.addEventListener('click', () => {
-        const today = new Date();
-        const y = today.getFullYear();
-        const m = String(today.getMonth() + 1).padStart(2, '0');
-        const d = String(today.getDate()).padStart(2, '0');
-        openModal(`${y}-${m}-${d}`);
-    });
+    if(addEventBtn) {
+        addEventBtn.addEventListener('click', () => {
+            const today = new Date();
+            const y = today.getFullYear();
+            const m = String(today.getMonth() + 1).padStart(2, '0');
+            const d = String(today.getDate()).padStart(2, '0');
+            openModal(`${y}-${m}-${d}`);
+        });
+    }
 
-    eventForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        saveEvent();
-    });
+    if(eventForm) {
+        eventForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            saveEvent();
+        });
+    }
 
+    // Initial Fetch & Render
+    fetchSchoolEvents();
     render();
     loadWidgets();
 });
 
 function loadWidgets() {
-    // Mock Data for Lunch
-    const lunchMenu = [
-        "Main: Spicy Pork Bulgogi",
-        "Soup: Soybean Paste Soup",
-        "Side: Kimchi, Seasoned Spinach",
-        "Dessert: Fruit Salad"
-    ];
-    
-    // Mock Data for Timetable (e.g., today's classes)
-    const timeTable = [
-        { period: 1, subject: "Mathematics" },
-        { period: 2, subject: "English" },
-        { period: 3, subject: "History" },
-        { period: 4, subject: "Science" },
-        { period: 5, subject: "Physical Ed" }
-    ];
+    // Legacy removed or empty
+}
 
-    // Inject Lunch
-    const lunchContainer = document.querySelector('.lunch-widget .widget-content');
-    if (lunchContainer) {
-        let html = '<ul style="list-style: none; padding: 0;">';
-        lunchMenu.forEach(item => {
-            html += `<li style="margin-bottom: 5px; padding-left: 10px; border-left: 2px solid #3498db;">${item}</li>`;
-        });
-        html += '</ul>';
-        lunchContainer.innerHTML = html;
-    }
+async function fetchSchoolEvents() {
+    const y = currentDate.getFullYear();
+    const m = String(currentDate.getMonth() + 1).padStart(2, '0'); // 01-12
+    const monthParam = `${y}-${m}`;
 
-    // Inject Timetable
-    const timeContainer = document.querySelector('.timetable-widget .widget-content');
-    if (timeContainer) {
-        let html = '<ul style="list-style: none; padding: 0;">';
-        timeTable.forEach(cls => {
-            html += `<li style="margin-bottom: 8px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 4px;">
-                <span style="font-weight: 500; color: #333;">${cls.period}교시</span>
-                <span>${cls.subject}</span>
-            </li>`;
-        });
-        html += '</ul>';
-        timeContainer.innerHTML = html;
+    try {
+        // Proxy to Real Backend
+        const res = await fetch(`/school/event?month=${monthParam}`);
+        if(res.ok) {
+            const data = await res.json();
+            if(data.items) {
+                // Map API events to local structure
+                // API: { title, startDate(YYYYMMDD), endDate, description }
+                schoolEvents = data.items.map(item => {
+                    const dStr = item.startDate; // YYYYMMDD
+                    const dateFmt = `${dStr.substring(0,4)}-${dStr.substring(4,6)}-${dStr.substring(6,8)}`;
+                    return {
+                        id: 'school_' + dStr + item.title,
+                        title: item.title,
+                        date: dateFmt,
+                        time: '09', // All day essentially
+                        color: '#e74c3c', // School events in Red/Distinct color
+                        type: 'school'
+                    };
+                });
+            }
+        }
+    } catch (e) {
+        console.error("Failed to fetch school events:", e);
     }
+    render(); // Re-render with new data
 }
 
 function switchView(view) {
     currentView = view;
-    
-    // Update active button state
     document.querySelectorAll('.view-switch button').forEach(btn => btn.classList.remove('active'));
     document.getElementById(`${view}ViewBtn`).classList.add('active');
-
     render();
 }
 
@@ -107,6 +104,7 @@ function navigate(direction) {
         currentDate.setDate(currentDate.getDate() + (direction * 7));
     } else if (currentView === 'month') {
         currentDate.setMonth(currentDate.getMonth() + direction);
+        fetchSchoolEvents(); // Fetch new month data
     } else if (currentView === 'year') {
         currentDate.setFullYear(currentDate.getFullYear() + direction);
     }
@@ -115,6 +113,7 @@ function navigate(direction) {
 
 function goToToday() {
     currentDate = new Date();
+    if(currentView === 'month') fetchSchoolEvents();
     render();
 }
 
@@ -122,6 +121,7 @@ function goToToday() {
 
 function openModal(dateStr, time = "09") {
     const modal = document.getElementById('eventModal');
+    if(!modal) return;
     document.getElementById('eventDate').value = dateStr;
     document.getElementById('eventTime').value = time;
     document.getElementById('eventTitle').value = '';
@@ -130,7 +130,8 @@ function openModal(dateStr, time = "09") {
 }
 
 function closeModal() {
-    document.getElementById('eventModal').style.display = 'none';
+    const modal = document.getElementById('eventModal');
+    if(modal) modal.style.display = 'none';
 }
 
 function saveEvent() {
@@ -146,7 +147,8 @@ function saveEvent() {
         title,
         date,
         time,
-        color
+        color,
+        type: 'personal'
     };
 
     events.push(newEvent);
@@ -156,14 +158,18 @@ function saveEvent() {
     render();
 }
 
+function getAllEvents() {
+    return [...events, ...schoolEvents];
+}
+
 function getEventsForDateAndTime(dateObj, hourStr) {
-    // Helper to format date as YYYY-MM-DD
     const y = dateObj.getFullYear();
     const m = String(dateObj.getMonth() + 1).padStart(2, '0');
     const d = String(dateObj.getDate()).padStart(2, '0');
     const dateStr = `${y}-${m}-${d}`;
-
-    return events.filter(e => e.date === dateStr && parseInt(e.time) === parseInt(hourStr));
+    
+    const all = getAllEvents();
+    return all.filter(e => e.date === dateStr && parseInt(e.time) === parseInt(hourStr));
 }
 
 function getEventsForDate(dateObj) {
@@ -172,7 +178,8 @@ function getEventsForDate(dateObj) {
     const d = String(dateObj.getDate()).padStart(2, '0');
     const dateStr = `${y}-${m}-${d}`;
 
-    return events.filter(e => e.date === dateStr);
+    const all = getAllEvents();
+    return all.filter(e => e.date === dateStr);
 }
 
 // --- Render Functions ---
@@ -182,9 +189,15 @@ function render() {
     const calendarGrid = document.getElementById('calendarGrid'); 
     const timezoneContainer = document.querySelector('.timezone-info'); 
     
-    dayHeaders.innerHTML = '';
-    calendarGrid.innerHTML = '';
-    timezoneContainer.classList.remove('week-grid-layout', 'day-grid-layout');
+    // Update Header Text
+    const monthDisplay = document.getElementById('currentMonthDisplay');
+    if(monthDisplay) {
+        monthDisplay.textContent = currentDate.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long' });
+    }
+
+    if(dayHeaders) dayHeaders.innerHTML = '';
+    if(calendarGrid) calendarGrid.innerHTML = '';
+    if(timezoneContainer) timezoneContainer.classList.remove('week-grid-layout', 'day-grid-layout');
     
     if (currentView === 'week') {
         renderWeek(timezoneContainer, dayHeaders, calendarGrid);
@@ -199,8 +212,10 @@ function render() {
 
 
 function renderWeek(container, headerEl, gridEl) {
-    container.style.display = 'block'; 
-    container.classList.add('week-grid-layout');
+    if(container) {
+        container.style.display = 'block'; 
+        container.classList.add('week-grid-layout');
+    }
     
     const startDate = new Date(currentDate);
     startDate.setDate(currentDate.getDate() - currentDate.getDay());
@@ -248,9 +263,8 @@ function renderWeek(container, headerEl, gridEl) {
                 cell.appendChild(evtDiv);
             });
 
-            // Add Click Listener to Open Modal
             cell.addEventListener('click', (e) => {
-                if(e.target === cell) { // Only if clicking cell, not event
+                if(e.target === cell) { 
                     const y = cellDate.getFullYear();
                     const m = String(cellDate.getMonth() + 1).padStart(2, '0');
                     const d = String(cellDate.getDate()).padStart(2, '0');
@@ -270,8 +284,10 @@ function renderWeek(container, headerEl, gridEl) {
 }
 
 function renderDay(container, headerEl, gridEl) {
-    container.style.display = 'block';
-    container.classList.add('day-grid-layout');
+    if(container) {
+        container.style.display = 'block';
+        container.classList.add('day-grid-layout');
+    }
 
     const today = new Date();
     const isToday = isSameDate(currentDate, today);
@@ -300,7 +316,6 @@ function renderDay(container, headerEl, gridEl) {
         const cell = document.createElement('div');
         cell.className = `day-cell ${isToday ? 'current-day-col' : ''}`;
         
-        // Render Events
         const cellEvents = getEventsForDateAndTime(currentDate, i);
         cellEvents.forEach(evt => {
             const evtDiv = document.createElement('div');
@@ -310,7 +325,6 @@ function renderDay(container, headerEl, gridEl) {
             cell.appendChild(evtDiv);
         });
 
-        // Add Click Listener
         cell.addEventListener('click', (e) => {
             if(e.target === cell) {
                  const y = currentDate.getFullYear();
@@ -331,7 +345,8 @@ function renderDay(container, headerEl, gridEl) {
 }
 
 function renderMonth(gridEl) {
-    document.querySelector('.timezone-info').style.display = 'none';
+    const timezoneContainer = document.querySelector('.timezone-info');
+    if(timezoneContainer) timezoneContainer.style.display = 'none';
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -375,8 +390,6 @@ function renderMonth(gridEl) {
             cell.appendChild(evtDiv);
         });
         
-        // Month view click to add event (defaulting to 9am)
-        // Need to capture date value correctly as tempDate changes
         const y = tempDate.getFullYear();
         const m = String(tempDate.getMonth() + 1).padStart(2, '0');
         const d = String(tempDate.getDate()).padStart(2, '0');
@@ -395,7 +408,8 @@ function renderMonth(gridEl) {
 }
 
 function renderYear(gridEl) {
-    document.querySelector('.timezone-info').style.display = 'none';
+    const timezoneContainer = document.querySelector('.timezone-info');
+    if(timezoneContainer) timezoneContainer.style.display = 'none';
     
     const year = currentDate.getFullYear();
     let html = `<div class="year-container">`;
@@ -431,11 +445,4 @@ function isSameDate(d1, d2) {
            d1.getFullYear() === d2.getFullYear();
 }
 
-
-// Append fetch logic to home.js
-document.addEventListener('DOMContentLoaded', () => {
-    // Fetch Timetable (Request only)
-    fetch('/api/timetable')
-        .catch(err => console.log('Timetable request sent.'));
-});
 
