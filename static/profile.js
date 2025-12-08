@@ -102,4 +102,15 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Email address updated!');
         }
     });
+    // Logout Logic
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+             if(confirm('로그아웃 하시겠습니까?')) {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('student_id');
+                window.location.href = '/';
+             }
+        });
+    }
 });
