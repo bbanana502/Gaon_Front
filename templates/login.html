@@ -15,32 +15,32 @@
         
         <div class="auth-card">
             <div class="auth-header">
-                <h2>Welcome back</h2>
-                <p>Please enter your details to sign in.</p>
+                <h2>환영합니다! 👋</h2>
+                <p>서비스 이용을 위해 로그인해주세요.</p>
             </div>
             
             <form action="/home"> <!-- Linking to home for demo -->
                 <div class="form-group">
-                    <label>Student Number</label>
-                    <input type="text" placeholder="Enter your student number" required>
+                    <label>학번</label>
+                    <input type="text" placeholder="학번을 입력하세요 (예: 1101)" required>
                 </div>
                 <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" placeholder="Enter your password" required>
+                    <label>비밀번호</label>
+                    <input type="password" placeholder="비밀번호를 입력하세요" required>
                 </div>
                 
                 <div class="form-footer">
                     <label class="checkbox-wrap">
-                        <input type="checkbox"> Remember me
+                        <input type="checkbox"> 로그인 유지
                     </label>
-                    <a href="#" class="forgot-link">Forgot password?</a>
+                    <a href="#" class="forgot-link">비밀번호 찾기</a>
                 </div>
                 
-                <button type="submit" class="submit-btn" onclick="location.href='/home'; return false;">Sign in</button>
+                <button type="submit" class="submit-btn" onclick="location.href='/home'; return false;">로그인</button>
             </form>
             
             <div class="bottom-link">
-                Don't have an account? <a href="/signup">Sign up</a>
+                계정이 없으신가요? <a href="/signup">회원가입</a>
             </div>
         </div>
     </div>

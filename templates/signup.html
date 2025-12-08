@@ -15,29 +15,29 @@
         
         <div class="auth-card">
             <div class="auth-header">
-                <h2>Create account</h2>
-                <p>Start your journey with Gaon today.</p>
+                <h2>회원가입</h2>
+                <p>가온과 함께 학교 생활을 시작해보세요.</p>
             </div>
             
             <form action="/login"> <!-- Redirect to login on signup -->
                 <div class="form-group">
-                    <label>Student Number</label>
-                    <input type="text" placeholder="Enter your student number" required>
+                    <label>학번</label>
+                    <input type="text" placeholder="학번을 입력하세요 (예: 1101)" required>
                 </div>
                 <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" placeholder="Create a password" required>
+                    <label>비밀번호</label>
+                    <input type="password" placeholder="비밀번호를 입력하세요" required>
                 </div>
                 <div class="form-group">
-                    <label>Confirm Password</label>
-                    <input type="password" placeholder="Confirm your password" required>
+                    <label>비밀번호 확인</label>
+                    <input type="password" placeholder="비밀번호를 다시 입력하세요" required>
                 </div>
                 
-                <button type="submit" class="submit-btn" onclick="location.href='/login'; return false;">Sign up</button>
+                <button type="submit" class="submit-btn" onclick="location.href='/login'; return false;">회원가입</button>
             </form>
             
             <div class="bottom-link">
-                Already have an account? <a href="/login">Log in</a>
+                이미 계정이 있으신가요? <a href="/login">로그인</a>
             </div>
         </div>
     </div>
