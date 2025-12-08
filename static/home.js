@@ -1,5 +1,10 @@
 // home.js
 
+// Auth Guard
+if (!localStorage.getItem('isLoggedIn')) {
+    window.location.href = '/login';
+}
+
 let currentDate = new Date();
 let currentView = 'month'; // Default to Month
 let events = JSON.parse(localStorage.getItem('gaonEvents')) || [];

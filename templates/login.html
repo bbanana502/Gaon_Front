@@ -36,7 +36,7 @@
                     <a href="#" class="forgot-link">비밀번호 찾기</a>
                 </div>
                 
-                <button type="submit" class="submit-btn" onclick="location.href='/home'; return false;">로그인</button>
+                <button type="submit" class="submit-btn" onclick="localStorage.setItem('isLoggedIn', 'true'); location.href='/home'; return false;">로그인</button>
             </form>
             
             <div class="bottom-link">
